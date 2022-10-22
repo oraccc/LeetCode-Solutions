@@ -2,8 +2,8 @@
 #include <vector>
 
 using namespace std;
-
-// [l, r) 不同于215题的写法
+// Time complexity : Average O(nlogn); Worst O(n^2)
+// [l, r) different from #215
 void quick_sort1(vector<int> &nums, int left, int right) 
 {
     if (left + 1 >= right) return;
@@ -21,7 +21,7 @@ void quick_sort1(vector<int> &nums, int left, int right)
     quick_sort1(nums, first + 1, right);
 }
 
-// [l, r) 类似于215题的写法
+// [l, r) similar to #215
 
 int partition(vector<int> &nums, int left, int right)
 {
