@@ -35,26 +35,24 @@ void dfs(TreeNode* &node, list<int> &path, vector<string> &ans) {
         path.push_back(node->val);
         string s = convert(path);
         ans.push_back(s);
+        path.pop_back();
         return;
     }
     path.push_back(node->val);
-    
     if (node->left != nullptr) {
         dfs(node->left, path, ans);
-        path.pop_back();
     }
     if (node->right != nullptr) {
         dfs(node->right, path, ans);
-        path.pop_back();
     }
+    path.pop_back();
     
 }
 string convert(const list<int> &path) {
     if (path.size() == 1) return to_string(path.front());
     else {
         string s = to_string(path.front());
-        for (auto beg = path.begin(); beg != path.end(); ++beg){
-            if (beg == path.begin()) continue;
+        for (auto beg = ++path.begin(); beg != path.end(); ++beg){
             s = s + "->" + to_string(*beg);
         }
         return s;
