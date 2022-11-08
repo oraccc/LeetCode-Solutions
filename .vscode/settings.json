@@ -3,6 +3,11 @@
         "map": "cpp",
         "xstring": "cpp",
         "xtree": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "deque": "cpp",
+        "initializer_list": "cpp",
+        "list": "cpp",
+        "xhash": "cpp",
+        "xiosbase": "cpp"
     }
 }
