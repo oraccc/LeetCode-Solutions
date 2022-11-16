@@ -1,5 +1,5 @@
 int maxProfit(vector<int>& prices) {
-    int n =prices.size();
+    int n = prices.size();
     if (n == 1) return 0;
     vector<int> buy(n+1, 0), sell(n+1, 0);
     buy[0] = -prices[0];
