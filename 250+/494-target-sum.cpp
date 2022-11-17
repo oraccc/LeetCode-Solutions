@@ -32,9 +32,9 @@ int dfs(vector<int>& nums, int target, int currSum, int i)
     if (i >= nums.size())
         return 0;
 
-    int sum = dfs(nums, target, currSum + nums[i], i + 1) + dfs(nums, target, currSum - nums[i], i + 1);
-    cache.insert(make_pair(make_pair(i, currSum), sum));
-    return sum;
+    int count = dfs(nums, target, currSum + nums[i], i + 1) + dfs(nums, target, currSum - nums[i], i + 1);
+    cache.insert(make_pair(make_pair(i, currSum), count));
+    return count;
 }
 
 int findTargetSumWays(vector<int>& nums, int target) 
