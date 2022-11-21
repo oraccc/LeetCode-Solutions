@@ -8,6 +8,7 @@
         "initializer_list": "cpp",
         "list": "cpp",
         "xhash": "cpp",
-        "xiosbase": "cpp"
+        "xiosbase": "cpp",
+        "iostream": "cpp"
     }
 }
