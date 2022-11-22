@@ -10,6 +10,7 @@ string convertToBase7(int num) {
         ans = to_string(b) + ans;
         num = a;
     }
+    
     if (isNegative) {
         return '-' + ans;
     }
