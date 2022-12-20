@@ -9,6 +9,7 @@
         "list": "cpp",
         "xhash": "cpp",
         "xiosbase": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "xutility": "cpp"
     }
 }
