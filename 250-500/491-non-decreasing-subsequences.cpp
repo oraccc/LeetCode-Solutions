@@ -7,7 +7,7 @@ vector<vector<int>> findSubsequences(vector<int>& nums) {
 }
 
 void backtracking(int index, vector<int> &nums) {
-    if (seq.size() > 1 && record.count(seq) == 0) {
+    if (seq.size() > 1) {
         record.insert(seq);
     }
 
