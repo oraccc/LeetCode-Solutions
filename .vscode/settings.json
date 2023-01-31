@@ -12,6 +12,8 @@
         "iostream": "cpp",
         "xutility": "cpp",
         "type_traits": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "array": "cpp",
+        "unordered_map": "cpp"
     }
 }
