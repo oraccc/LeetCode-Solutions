@@ -14,3 +14,24 @@ int nthSuperUglyNumber(int n, vector<int>& primes) {
     }
     return dp[n-1];
 }
+
+// priority_queue: TLE for one case
+int nthSuperUglyNumber(int n, vector<int>& primes) {
+    unordered_set<long long> s;
+    priority_queue<long long, vector<long long>, greater<long long>> q;
+    s.insert(1);
+    q.push(1);
+    int head = 0;
+    for (int i = 0; i < n; ++i) {
+        head = q.top();
+        for (const auto &prime : primes) {
+            long long result = head * (long long)prime;
+            if (s.count(result) == 0) {
+                s.insert(result);
+                q.push(result);
+            }
+        }
+        q.pop();
+    }
+    return head;
+}
