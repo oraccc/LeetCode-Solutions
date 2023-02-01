@@ -14,3 +14,15 @@ bool isIsomorphic(string s, string t) {
     }
     return true;
 }
+
+// first appear index
+bool isIsomorphic(string s, string t) {
+    vector<int> s_index(256, -1), t_index(256, -1);
+    for (int i = 0; i < s.size(); ++i) {
+        if (s_index[s[i]] != t_index[t[i]]) {
+            return false;
+        }
+        s_index[s[i]] = t_index[t[i]] = i;
+    }
+    return true;
+}
