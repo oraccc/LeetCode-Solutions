@@ -42,8 +42,8 @@ int lengthOfLongestSubstring(string s) {
         }
         else{
             while (sc.count(s[right])){
-                    sc.erase(s[left]);
-                    ++left;
+                sc.erase(s[left]);
+                ++left;
             }
         }
     }
