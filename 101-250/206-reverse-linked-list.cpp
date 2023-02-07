@@ -12,3 +12,11 @@ ListNode* reverseList(ListNode* head) {
 
     return prev;
 }
+
+// Recursion
+ListNode* reverseList(ListNode* head, ListNode* prev = nullptr) {
+    if (!head) return prev;
+    ListNode* next = head->next;
+    head->next = prev;
+    return reverseList(next, head);     
+}
