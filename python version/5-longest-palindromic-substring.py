@@ -20,3 +20,28 @@ class Solution:
                         max_len = s_len 
                         max_start = i
         return s[max_start:max_start+max_len]
+    
+
+# Another way to dp
+
+class Solution:
+    def longestPalindrome(self, s: str) -> str:
+        n = len(s)
+        dp = [[False for _ in range(n)] for _ in range(n)]
+        max_len = 1
+        max_start = 0
+        
+        for i in range(n-1, -1, -1):
+            for j in range(i, n):
+                if j-i <= 1 and s[j] == s[i]:
+                    dp[i][j] = True
+                    if j-i+1 > max_len:
+                        max_len = j-i+1
+                        max_start = i
+                elif dp[i+1][j-1] and s[j] == s[i]:
+                    dp[i][j] = True
+                    if j-i+1 > max_len:
+                        max_len = j-i+1
+                        max_start = i
+
+        return s[max_start:max_start+max_len]
