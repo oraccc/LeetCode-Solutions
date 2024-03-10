@@ -1,4 +1,4 @@
-class ListNode:
+class LinkNode:
     def __init__(self, key=None, value=None):
         self.key = key
         self.value = value
@@ -9,8 +9,8 @@ class LRUCache:
     def __init__(self, capacity: int):
         self.capacity = capacity
         self.hash_map = {}
-        self.head = ListNode()
-        self.tail = ListNode()
+        self.head = LinkNode()
+        self.tail = LinkNode()
         self.head.next = self.tail
         self.tail.prev = self.head
 
@@ -39,7 +39,7 @@ class LRUCache:
                 self.hash_map.pop(self.head.next.key)
                 self.head.next = self.head.next.next
                 self.head.next.prev = self.head
-            new_node = ListNode(key, value)
+            new_node = LinkNode(key, value)
             self.hash_map[key] = new_node
             new_node.prev = self.tail.prev
             new_node.next = self.tail
