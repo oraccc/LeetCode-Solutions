@@ -46,7 +46,14 @@ class LRUCache:
             self.tail.prev.next = new_node
             self.tail.prev = new_node
             
-
+# # My Test
+# obj = LRUCache(2)
+# print(obj.get(1))
+# obj.put(1, 1)
+# obj.put(3, 3)
+# obj.put(2, 2)
+# print(obj.get(1))
+# print(obj.get(3))
 
 # Your LRUCache object will be instantiated and called as such:
 # obj = LRUCache(capacity)
