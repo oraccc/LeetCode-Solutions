@@ -208,6 +208,47 @@ class Solution:
 
 
 
+### 73-矩阵置零
+
+给定一个 `m x n` 的矩阵，如果一个元素为 **0** ，则将其所在行和列的所有元素都设为 **0** 。请使用 原地算法。
+
+<img src="https://assets.leetcode.com/uploads/2020/08/17/mat1.jpg" style="zoom: 67%;" />
+
+**思路**
+
+传统的遍历思路，记录有0的行和列，并在遍历完之后依次修改
+
+```python
+class Solution:
+    def setZeroes(self, matrix: List[List[int]]) -> None:
+        """
+        Do not return anything, modify matrix in-place instead.
+        """
+        n = len(matrix)
+        m = len(matrix[0])
+        zero_row = [False] * n
+        zero_col = [False] * m 
+        for i in range(n):
+            for j in range(m):
+                if matrix[i][j] == 0:
+                    zero_row[i] = True
+                    zero_col[j] = True
+        
+        for i in range(n):
+            if zero_row[i]:
+                for j in range(m):
+                    matrix[i][j] = 0
+        
+        for j in range(m):
+            if zero_col[j]:
+                for i in range(n):
+                    matrix[i][j] = 0
+```
+
+---
+
+
+
 ### 94-二叉树的中序遍历
 
 给定一个二叉树的根节点 `root` ，返回 *它的 **中序** 遍历* 。
