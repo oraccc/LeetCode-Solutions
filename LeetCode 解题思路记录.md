@@ -446,6 +446,34 @@ class Solution:
 
 
 
+### 560-和为k的子数组
+
+给你一个整数数组 `nums` 和一个整数 `k` ，请你统计并返回 *该数组中和为 `k` 的子数组的个数* 。
+
+子数组是数组中元素的连续非空序列。
+
+**思路**
+
+使用前缀和可以快速计算区间的和，当计算当前的前缀和pre_sum时，可以检查pre_sum-k这个前缀和是否存在，有几个（因为从左往右遍历，因此此时pre_sum-k如果有，那便一定已经计算过了），计入总数中。使用dict来存储这个次数。这里为了方便使用collection.defaultdict来创建默认是0的dict。
+
+```python
+class Solution:
+    def subarraySum(self, nums: List[int], k: int) -> int:
+        pre_sum = 0
+        count = 0
+        prefix_dict = collections.defaultdict(int)
+        prefix_dict[0] = 1
+        for num in nums:
+            pre_sum += num
+            count += prefix_dict[pre_sum-k]
+            prefix_dict[pre_sum] += 1
+        return count
+```
+
+---
+
+
+
 ### 994-腐烂的橘子
 
 在给定的 `m x n` 网格 `grid` 中，每个单元格可以有以下三个值之一：
