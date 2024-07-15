@@ -442,3 +442,64 @@ class Solution:
             right += 1
 ```
 
+---
+
+
+
+### 994-腐烂的橘子
+
+在给定的 `m x n` 网格 `grid` 中，每个单元格可以有以下三个值之一：
+
+- 值 `0` 代表空单元格；
+- 值 `1` 代表新鲜橘子；
+- 值 `2` 代表腐烂的橘子。
+
+每分钟，腐烂的橘子 **周围 4 个方向上相邻** 的新鲜橘子都会腐烂。
+
+返回 *直到单元格中没有新鲜橘子为止所必须经过的最小分钟数。如果不可能，返回 `-1`* 。
+
+<img src="https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2019/02/16/oranges.png" style="zoom:50%;" />
+
+**思路**
+
+因为求的是最短路径类似的问题，因此想到用BFS。注意可能有多个腐败源，因此先全部扫描一遍，计算目前新鲜的橘子的数目。若在BFS结束之后，还没有归零，说明没有办法全部覆盖到，因此返回-1。
+
+queue存储的是一个tuple，代表坐标位置。注意为了防止重复计算，因此一旦遍历到一个新鲜的橘子，就要将其标记为腐烂。
+
+```python
+class Solution:
+    def orangesRotting(self, grid: List[List[int]]) -> int:
+        m = len(grid)
+        n = len(grid[0])
+        count = 0
+        directions = [-1, 0, 1, 0, -1]
+        queue = []
+        for i in range(m):
+            for j in range(n):
+                if grid[i][j] == 1:
+                    count += 1
+                elif grid[i][j] == 2:
+                    queue.append((i, j))
+        ans = 0
+        if count == 0:
+            return ans
+        while queue:
+            ans += 1
+            for _ in range(len(queue)):
+                i, j = queue[0]
+                queue.pop(0)
+                for k in range(4):
+                    row = i + directions[k]
+                    col = j + directions[k+1]
+                    if row < m and row >= 0 and col < n and col >=0 and grid[row][col]==1:
+                        count -= 1
+                        grid[row][col] = 2
+                        queue.append((row, col))
+        if count != 0:
+            return -1
+        else:
+            return ans-1
+
+```
+
+---
