@@ -181,6 +181,29 @@ class Solution:
 
 
 
+### 53-最大子数组和
+
+给你一个整数数组 `nums` ，请你找出一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。**子数组**是数组中的一个连续部分。
+
+**思路**
+
+动态规划，dp[i]代表以nums[i]结尾的最大的连续子数组，因此若dp[i-1]时一个整数，那么加上目前的数一定是更大的连续子数组，否则就以自己重新开始。注意返回时，返回的是整个dp的最大值，因为并不能保证最大子数组一定是以最后一个元素结尾的。
+
+```python
+class Solution:
+    def maxSubArray(self, nums: List[int]) -> int:
+        n = len(nums)
+        dp = [0]*n
+        dp[0] = nums[0]
+        for i in range(1, n):
+            dp[i] = max(dp[i-1]+nums[i], nums[i])
+        return max(dp)
+```
+
+---
+
+
+
 ### 70-爬楼梯
 
 假设你正在爬楼梯。需要 `n` 阶你才能到达楼顶。
