@@ -490,6 +490,36 @@ class Solution:
 
 
 
+### 226-翻转二叉树
+
+给你一棵二叉树的根节点 `root` ，翻转这棵二叉树，并返回其根节点。
+
+**思路**
+
+使用递归，每次翻转当前节点的左子树和右子树，然后交换当前节点的左右子树
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def invertTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        if not root:
+            return root
+        left_tree = self.invertTree(root.left)
+        right_tree = self.invertTree(root.right)
+        root.left = right_tree
+        root.right = left_tree
+        return root
+```
+
+---
+
+
+
 ### 234-回文链表
 
 给你一个单链表的头节点 `head` ，请你判断该链表是否为回文链表。如果是，返回 `true` ；否则，返回 `false` 。
