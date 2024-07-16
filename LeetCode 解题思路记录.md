@@ -438,6 +438,107 @@ class Solution:
 
 
 
+### 206-反转链表
+
+给你单链表的头节点 `head` ，请你反转链表，并返回反转后的链表。
+
+**思路1**
+
+遍历
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def reverseList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        prev = None
+        curr = head
+        while curr:
+            tmp = curr.next
+            curr.next = prev 
+            prev = curr
+            curr = tmp
+        return prev
+```
+
+**思路2**
+
+递归来做，reverseList函数返回反转之后的链表头，接着将当前的head放到链表的最末尾去
+
+返回新的链表头
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def reverseList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        if not head or not head.next:
+            return head
+        new_head = self.reverseList(head.next)
+        head.next.next = head
+        head.next = None
+        return new_head
+```
+
+---
+
+
+
+### 234-回文链表
+
+给你一个单链表的头节点 `head` ，请你判断该链表是否为回文链表。如果是，返回 `true` ；否则，返回 `false` 。
+
+**思路**
+
+先使用快慢指针找到链表的中心，然后反转链表的后半部分，接着一一比较前半部分链表和反转后的后半部分链表的每一个节点的值。
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def reverseList(self, head):
+        prev = None
+        curr = head
+        while curr:
+            tmp = curr.next
+            curr.next = prev
+            prev = curr
+            curr = tmp
+        return prev
+
+    def isPalindrome(self, head: Optional[ListNode]) -> bool:
+        slow = fast = head
+        while fast.next and fast.next.next:
+            slow = slow.next
+            fast = fast.next.next
+        half = slow.next
+        slow.next = None
+        l1 = head
+        l2 = self.reverseList(half)
+
+        while l1 and l2:
+            if l1.val == l2.val:
+                l1 = l1.next
+                l2 = l2.next
+            else:
+                return False
+                
+        return True
+```
+
+---
+
+
+
 ### 283-移动零
 
 给定一个数组 `nums`，编写一个函数将所有 `0` 移动到数组的末尾，同时保持非零元素的相对顺序。
