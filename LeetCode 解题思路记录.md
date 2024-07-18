@@ -33,6 +33,47 @@ class Solution:
 
 
 
+### 2-两数相加
+
+给你两个 **非空** 的链表，表示两个非负的整数。它们每位数字都是按照 **逆序** 的方式存储的，并且每个节点只能存储 **一位** 数字。
+
+请你将两个数相加，并以相同形式返回一个表示和的链表。
+
+你可以假设除了数字 0 之外，这两个数都不会以 0 开头。
+
+<img src="https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2021/01/02/addtwonumber1.jpg" style="zoom: 67%;" />
+
+**思路**
+
+用做加法的思路，注意进位，直到两个链表都走完了并且也不需要进位了，才停止遍历。
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def addTwoNumbers(self, l1: Optional[ListNode], l2: Optional[ListNode]) -> Optional[ListNode]:
+        dummy_head = ListNode(-1)
+        curr = dummy_head
+        res = carry = 0
+        while l1 or l2 or carry:
+            num1 = l1.val if l1 else 0
+            num2 = l2.val if l2 else 0
+            res = (num1+num2+carry) % 10
+            carry = (num1+num2+carry) // 10
+            curr.next = ListNode(res)
+            curr = curr.next
+            l1 = l1.next if l1 else None
+            l2 = l2.next if l2 else None
+        return dummy_head.next
+```
+
+---
+
+
+
 ### 3-无重复字符的最长字串
 
 给定一个字符串 `s` ，请你找出其中不含有重复字符的 **最长子串** 的长度。
