@@ -364,6 +364,32 @@ class Solution:
 
 
 
+### 118-杨辉三角
+
+给定一个非负整数 *`numRows`，*生成「杨辉三角」的前 *`numRows`* 行。
+
+**思路**
+
+将杨辉三角左对齐，看成一个下三角的矩阵，其转移关系为
+
+`dp[i][j] = dp[i-1][j-1] + dp[i-1][j]`
+
+```python
+class Solution:
+    def generate(self, numRows: int) -> List[List[int]]:
+        dp = [[1]*(i+1) for i in range(numRows)]
+        if numRows <= 2:
+            return dp
+        for i in range(2, numRows):
+            for j in range(1, i):
+                dp[i][j] = dp[i-1][j-1] + dp[i-1][j]
+        return dp
+```
+
+---
+
+
+
 ### 136-只出现一次的数字
 
 给你一个 **非空** 整数数组 `nums` ，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。
