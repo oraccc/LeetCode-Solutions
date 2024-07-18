@@ -204,6 +204,39 @@ class Solution:
 
 
 
+### 56-合并区间
+
+以数组 `intervals` 表示若干个区间的集合，其中单个区间为 `intervals[i] = [starti, endi]` 。请你合并所有重叠的区间，并返回 *一个不重叠的区间数组，该数组需恰好覆盖输入中的所有区间* 。
+
+**思路**
+
+首先对所有的区间进行排序，按照左边界从小到大进行排序。
+
+接着选第一个的区间来决定左右边界，循环intervals，如果后面的区间与目前的有重叠，那么合并，否则就加入答案中。记得循环到最后还有区间没有加入答案。
+
+```python
+class Solution:
+    def merge(self, intervals: List[List[int]]) -> List[List[int]]:
+        intervals.sort(key=lambda x:x[0])
+        ans = []
+        left = intervals[0][0]
+        right = intervals[0][1]
+        for i in range(1, len(intervals)):
+            curr = intervals[i]
+            if curr[0] <= right:
+                right = max(right, curr[1])
+            else:
+                ans.append([left, right])
+                left = curr[0]
+                right = curr[1]
+        ans.append([left, right])
+        return ans
+```
+
+---
+
+
+
 ### 70-爬楼梯
 
 假设你正在爬楼梯。需要 `n` 阶你才能到达楼顶。
