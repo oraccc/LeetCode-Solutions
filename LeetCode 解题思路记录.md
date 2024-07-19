@@ -560,6 +560,30 @@ class Solution:
 
 
 
+### 189-轮转数组
+
+给定一个整数数组 `nums`，将数组中的元素向右轮转 `k` 个位置，其中 `k` 是非负数。
+
+**思路**
+
+首先对k进行取模，接着利用python数组的切片操作，进行拼接
+
+如果直接使用 `nums = nums[-k:] + nums[0:-k]`，实际上创建了一个新的列表，并将其赋值给了局部变量 `nums`。这并不会改变原列表 `nums` 的内容，因为这个赋值操作只是改变了局部变量 `nums` 的引用，指向了一个新的列表对象。因此应该使用`nums[:]` 修改原列表的内容。
+
+```python
+class Solution:
+    def rotate(self, nums: List[int], k: int) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+        k = k % len(nums)
+        nums[:] = nums[-k:] + nums[0:-k]
+```
+
+---
+
+
+
 ### 200-岛屿数量
 
 给你一个由 `'1'`（陆地）和 `'0'`（水）组成的的二维网格，请你计算网格中岛屿的数量。
