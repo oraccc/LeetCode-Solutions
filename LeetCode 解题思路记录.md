@@ -220,6 +220,43 @@ class Solution:
 
 
 
+### 46-全排列
+
+给定一个不含重复数字的数组 `nums` ，返回其 *所有可能的全排列* 。你可以 **按任意顺序** 返回答案。
+
+**思路**
+
+因为需要遍历全可能的结果，因此需要回溯。回溯结束的判断条件是目前的数组长度已经到达n了。同时需要设置一个数组visited，来记录有没有访问过该位置的元素。回溯的时候，若需要加入这个位置的元素，那么就将此位置为True，退出时，pop此元素，并且恢复此位为False。
+
+注意python列表的性质，添加结果的时候需要使用切片操作进行复制。
+
+```python
+class Solution:
+    def permute(self, nums: List[int]) -> List[List[int]]:
+        n = len(nums)
+        visited = [False]*n
+        pre = []
+        ans = []
+        def backtracking():
+            if len(pre) == n:
+                ans.append(pre[:])
+                return
+            for i in range(n):
+                if not visited[i]:
+                    visited[i] = True
+                    pre.append(nums[i])
+                    backtracking()
+                    pre.pop()
+                    visited[i] = False
+        
+        backtracking()
+        return ans
+```
+
+---
+
+
+
 ### 48-旋转图像
 
 给定一个 *n* × *n* 的二维矩阵 `matrix` 表示一个图像。请你将图像顺时针旋转 90 度。
