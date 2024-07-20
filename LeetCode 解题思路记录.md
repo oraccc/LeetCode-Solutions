@@ -140,6 +140,41 @@ class Solution:
 
 
 
+### 19-删除链表的倒数第N个结点
+
+给你一个链表，删除链表的倒数第 `n` 个结点，并且返回链表的头结点。
+
+**思路**
+
+设置快慢指针，让快慢指针实现差距n个位置。接着同时推进快慢指针，当快指针到链表结尾的时候，慢指针的下一个便是要删除的节点。
+
+注意可能要删除的节点便是头节点，因此需要设置一个dummy_head，快慢指针一开始都指向这个头节点前一个的指针。
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def removeNthFromEnd(self, head: Optional[ListNode], n: int) -> Optional[ListNode]:
+        dummy_head = ListNode()
+        dummy_head.next = head
+        slow = fast = dummy_head
+        
+        for i in range(n):
+            fast = fast.next
+        while fast.next:
+            slow = slow.next
+            fast = fast.next
+        slow.next = slow.next.next
+        return dummy_head.next
+```
+
+---
+
+
+
 ### 20-有效的括号
 
 给定一个只包括 `'('`，`')'`，`'{'`，`'}'`，`'['`，`']'` 的字符串 `s` ，判断字符串是否有效。
