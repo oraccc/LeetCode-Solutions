@@ -177,6 +177,38 @@ class Solution:
 
 
 
+### 48-旋转图像
+
+给定一个 *n* × *n* 的二维矩阵 `matrix` 表示一个图像。请你将图像顺时针旋转 90 度。
+
+你必须在 原地旋转图像，这意味着你需要直接修改输入的二维矩阵。**请不要** 使用另一个矩阵来旋转图像。
+
+**思路**
+
+先按照正对角线翻折矩阵，接着让矩阵纵向对称翻折
+
+注意这是一个原地的算法，因此如果需要原地交换两个数组，最好的办法就是依次交换两个数组内每一个元素的值
+
+```python
+class Solution:
+    def rotate(self, matrix: List[List[int]]) -> None:
+        """
+        Do not return anything, modify matrix in-place instead.
+        """
+        n = len(matrix)
+        for i in range(n):
+            for j in range(i):
+                matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
+        
+        for j in range(n//2):
+            for i in range(n):
+                matrix[i][j], matrix[i][n-1-j] = matrix[i][n-1-j], matrix[i][j]
+```
+
+---
+
+
+
 ### 49-字母异位词分组
 
 给你一个字符串数组，请你将 **字母异位词** 组合在一起。可以按任意顺序返回结果列表。
