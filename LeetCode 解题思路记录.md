@@ -245,6 +245,47 @@ class Solution:
 
 
 
+### 54-螺旋矩阵
+
+给你一个 `m` 行 `n` 列的矩阵 `matrix` ，请按照 **顺时针螺旋顺序** ，返回矩阵中的所有元素。
+
+<img src="https://assets.leetcode.com/uploads/2020/11/13/spiral.jpg" style="zoom:67%;" />
+
+**思路**
+
+设置四个循环以及四个变量分别代表边界
+
+注意在逆向循环的时候，不要重复读取数字，可以考虑特殊情况，即只有一列或者只有一行的情况，就可以想出逆向情况下`if left < right and top < bottom`这个边界情况。
+
+```python
+class Solution:
+    def spiralOrder(self, matrix: List[List[int]]) -> List[int]:
+        top = 0
+        bottom = len(matrix)-1
+        left = 0
+        right = len(matrix[0])-1
+        ans = []
+        while left <= right and top <= bottom:
+            for i in range(left, right+1):
+                ans.append(matrix[top][i])
+            for i in range(top+1, bottom+1):
+                ans.append(matrix[i][right])
+            if left < right and top < bottom:
+                for i in range(right-1, left-1, -1):
+                    ans.append(matrix[bottom][i])
+                for i in range(bottom-1, top, -1):
+                    ans.append(matrix[i][left])
+            
+            left, right, top, bottom = left+1, right-1, top+1, bottom-1
+        return ans
+
+
+```
+
+---
+
+
+
 ### 56-合并区间
 
 以数组 `intervals` 表示若干个区间的集合，其中单个区间为 `intervals[i] = [starti, endi]` 。请你合并所有重叠的区间，并返回 *一个不重叠的区间数组，该数组需恰好覆盖输入中的所有区间* 。
