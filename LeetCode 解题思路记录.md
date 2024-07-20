@@ -1057,6 +1057,48 @@ class Solution:
 
 
 
+### 543-二叉树的直径
+
+给你一棵二叉树的根节点，返回该树的 **直径** 。
+
+二叉树的 **直径** 是指树中任意两个节点之间最长路径的 **长度** 。这条路径可能经过也可能不经过根节点 `root` 。
+
+两节点之间路径的 **长度** 由它们之间边数表示。
+
+**思路**
+
+本质上时记录**左右子树深度之和的最大值**。helper函数就是用来求当前根节点的最大深度。
+
+由于最长的路径不一定会经过当前的root节点，因此递归函数返回的值不一定就是最长路径。因此需要设置一个全局的变量来记录这一个值。而递归函数只是返回以root节点为路径的一个边的最长路径，即`1+max(left_max, right_max)`，（因为左边的路径到root距离要再加一个，右边也是）。然而实际判断最长路径的操作实在每次递归结束后，判断当前左路径加上右路径是否是最长的。
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def diameterOfBinaryTree(self, root: Optional[TreeNode]) -> int:
+        diameter = 0
+
+        def helper(node):
+            nonlocal diameter
+            if not node:
+                return 0
+            left_max = helper(node.left)
+            right_max = helper(node.right)
+            diameter = max(diameter, left_max+right_max)
+            return 1+max(left_max, right_max)
+        
+        helper(root)
+        return diameter
+```
+
+---
+
+
+
 ### 560-和为k的子数组
 
 给你一个整数数组 `nums` 和一个整数 `k` ，请你统计并返回 *该数组中和为 `k` 的子数组的个数* 。
