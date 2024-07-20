@@ -177,6 +177,49 @@ class Solution:
 
 
 
+### 21-合并两个有序链表
+
+将两个升序链表合并为一个新的 **升序** 链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。 
+
+ **思路**
+
+注意循环条件是l1 and l2
+
+由于题目要求是拼接原来的链表，因此最好不要创建新的节点，直接对原来的链表做操作即可
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def mergeTwoLists(self, list1: Optional[ListNode], list2: Optional[ListNode]) -> Optional[ListNode]:
+        l1 = list1
+        l2 = list2
+        dummy_head = ListNode()
+        curr = dummy_head
+        while l1 and l2:
+            if l1.val <= l2.val:
+                curr.next = l1
+                l1 = l1.next
+            else:
+                curr.next = l2
+                l2 = l2.next
+            curr = curr.next
+            
+        if l1:
+            curr.next = l1
+        if l2:
+            curr.next = l2
+        return dummy_head.next
+
+```
+
+---
+
+
+
 ### 48-旋转图像
 
 给定一个 *n* × *n* 的二维矩阵 `matrix` 表示一个图像。请你将图像顺时针旋转 90 度。
