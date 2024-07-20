@@ -346,6 +346,50 @@ class Solution:
 
 
 
+### 75-颜色分类
+
+给定一个包含红色、白色和蓝色、共 `n` 个元素的数组 `nums` ，原地对它们进行排序，使得相同颜色的元素相邻，并按照红色、白色、蓝色顺序排列。
+
+我们使用整数 `0`、 `1` 和 `2` 分别表示红色、白色和蓝色。
+
+必须在不使用库内置的 sort 函数的情况下解决这个问题。
+
+**思路**
+
+设置两个指针，一左一右分别代表应该插入0和插入2的位置，接着使用curr指针遍历整个数组。
+
+如果当前位置为0，那么就和左指针互换，并且左指针和curr都要向前移动，这是因为左指针现在的值只可能是1或者0，而不会是2，因为2已经被换到后面去了。
+
+如果当前位置为2，与右指针互换，这是只需要移动右指针，不需要移动左边的，因为在curr位置换过来的值仍有可能是2。
+
+否则当前位置是1，那么移动curr向右。注意循环的边界条件是curr<=right。
+
+```python
+class Solution:
+    def sortColors(self, nums: List[int]) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+        zero = 0
+        two = len(nums)-1
+        curr = 0
+        while curr <= two:
+            if nums[curr] == 0:
+                nums[curr], nums[zero] = nums[zero], nums[curr]
+                curr += 1
+                zero += 1
+            elif nums[curr] == 2:
+                nums[curr], nums[two] = nums[two], nums[curr]
+                two -= 1
+            else:
+                curr += 1
+        
+```
+
+---
+
+
+
 ### 94-二叉树的中序遍历
 
 给定一个二叉树的根节点 `root` ，返回 *它的 **中序** 遍历* 。
