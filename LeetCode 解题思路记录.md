@@ -255,6 +255,36 @@ class Solution:
 
 
 
+### 35-搜索插入位置
+
+给定一个排序数组和一个目标值，在数组中找到目标值，并返回其索引。如果目标值不存在于数组中，返回它将会被按顺序插入的位置。
+
+请必须使用时间复杂度为 `O(log n)` 的算法。
+
+**思路**
+
+二分搜索，这里设置了左闭右开的区间。
+
+关于`nums[mid] >= target`此处应该使用大于还是大于等于，应该由我们的mid是怎么计算的来决定。不妨考虑left和right相差一个位置的情况（即循环结束的前一步），此时mid一定是落在left的位置（`mid = (left+right)//2`）。若target本身就在left位置，此时只有`nums[mid] >= target`，可以将区间收敛到left的位置，否则便会收敛到比target大的那一个位置。
+
+```python
+class Solution:
+    def searchInsert(self, nums: List[int], target: int) -> int:
+        left = 0
+        right = len(nums)
+        while left < right:
+            mid = (left+right)//2
+            if nums[mid] >= target:
+                right = mid
+            else:
+                left = mid+1
+        return left
+```
+
+---
+
+
+
 ### 46-全排列
 
 给定一个不含重复数字的数组 `nums` ，返回其 *所有可能的全排列* 。你可以 **按任意顺序** 返回答案。
@@ -642,6 +672,47 @@ class Solution:
 
 
 
+### 102-二叉树的层序遍历
+
+给你二叉树的根节点 `root` ，返回其节点值的 **层序遍历** 。 （即逐层地，从左到右访问所有节点）。
+
+**思路**
+
+层序遍历使用队列即可解决
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def levelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:
+        ans = []
+        queue = []
+        if not root:
+            return ans
+        queue.append(root)
+        while queue:
+            n = len(queue)
+            tmp = []
+            for _ in range(n):
+                node = queue.pop(0)
+                tmp.append(node.val)
+                if node.left:
+                    queue.append(node.left)
+                if node.right:
+                    queue.append(node.right)
+            ans.append(tmp)
+
+        return ans
+```
+
+---
+
+
+
 ### 104-二叉树的最大深度
 
 给定一个二叉树 `root` ，返回其最大深度。
@@ -941,6 +1012,53 @@ class Solution:
         head.next.next = head
         head.next = None
         return new_head
+```
+
+---
+
+
+
+### 207-课程表
+
+你这个学期必须选修 `numCourses` 门课程，记为 `0` 到 `numCourses - 1` 。
+
+在选修某些课程之前需要一些先修课程。 先修课程按数组 `prerequisites` 给出，其中 `prerequisites[i] = [ai, bi]` ，表示如果要学习课程 `ai` 则 **必须** 先学习课程 `bi` 。
+
+- 例如，先修课程对 `[0, 1]` 表示：想要学习课程 `0` ，你需要先完成课程 `1` 。
+
+请你判断是否可能完成所有课程的学习？如果可以，返回 `true` ；否则，返回 `false` 。
+
+**思路**
+
+这是一个图的遍历问题，由于需要计算能否满足所有的点，因此需要使用BFS算法，可以使用队列。
+
+首先需要设置一个in_degrees列表，来记录每一个点的先修课程数，当先修课程为0的时候，即可认为可以修这一门课了。还需要一个out_graph，来记录这个课的后续课程，当这门课修好之后，所有的后续课程的先修课数量减一，若为0的时候，就可以加入列表，表示可以修这一门课了。
+
+```python
+class Solution:
+    def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
+        in_degrees = [0]*numCourses
+        out_graph = collections.defaultdict(list)
+        for pair in prerequisites:
+            in_node, out_node = pair[0], pair[1]
+            out_graph[out_node].append(in_node)
+            in_degrees[in_node] += 1
+        queue = []
+        finished = 0
+        for i in range(len(in_degrees)):
+            if in_degrees[i] == 0:
+                queue.append(i)
+                finished += 1
+        while queue:
+            for _ in range(len(queue)):
+                course = queue.pop(0)
+                for each_in in out_graph[course]:
+                    in_degrees[each_in] -= 1
+                    if in_degrees[each_in] == 0:
+                        queue.append(each_in)
+                        finished += 1
+        return finished == numCourses
+            
 ```
 
 ---
