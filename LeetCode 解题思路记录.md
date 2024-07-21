@@ -1026,6 +1026,36 @@ class Solution:
 
 
 
+### 238-除自身以外数组的乘积
+
+给你一个整数数组 `nums`，返回 数组 `answer` ，其中 `answer[i]` 等于 `nums` 中除 `nums[i]` 之外其余各元素的乘积 。
+
+题目数据 **保证** 数组 `nums`之中任意元素的全部前缀元素和后缀的乘积都在 **32 位** 整数范围内。
+
+请 **不要使用除法，**且在 `O(n)` 时间复杂度内完成此题。
+
+**思路**
+
+记录每一个位置的前缀乘积和后缀乘积，两次遍历即可
+
+```python
+class Solution:
+    def productExceptSelf(self, nums: List[int]) -> List[int]:
+        n = len(nums)
+        prev = [1]*n 
+        after = [1]*n 
+        for i in range(1,n):
+            prev[i] = prev[i-1]*nums[i-1]
+        for i in range(n-2, -1, -1):
+            after[i] = after[i+1] * nums[i+1]
+        ans = [x*y for x, y in zip(prev, after)]
+        return ans
+```
+
+---
+
+
+
 ### 283-移动零
 
 给定一个数组 `nums`，编写一个函数将所有 `0` 移动到数组的末尾，同时保持非零元素的相对顺序。
@@ -1070,6 +1100,8 @@ class Solution:
 本质上时记录**左右子树深度之和的最大值**。helper函数就是用来求当前根节点的最大深度。
 
 由于最长的路径不一定会经过当前的root节点，因此递归函数返回的值不一定就是最长路径。因此需要设置一个全局的变量来记录这一个值。而递归函数只是返回以root节点为路径的一个边的最长路径，即`1+max(left_max, right_max)`，（因为左边的路径到root距离要再加一个，右边也是）。然而实际判断最长路径的操作实在每次递归结束后，判断当前左路径加上右路径是否是最长的。
+
+注意nonlocal修饰符，`nonlocal diameter` 声明告诉 Python，`diameter` 变量不是 `helper` 函数的局部变量，而是外层 `diameterOfBinaryTree` 函数的局部变量。这样，`helper` 函数就可以正确地修改 `diameter` 变量的值了。
 
 ```python
 # Definition for a binary tree node.
