@@ -1366,6 +1366,56 @@ class Solution:
 
 
 
+### 438-找到字符串中所有字母异位词
+
+给定两个字符串 `s` 和 `p`，找到 `s` 中所有 `p` 的 **异位词** 的子串，返回这些子串的起始索引。不考虑答案输出的顺序。
+
+**异位词** 指由相同字母重排列形成的字符串（包括相同的字符串）。
+
+**思路**
+
+可以使用滑动窗口来找符合长度的词，并使用数组来表示单词中字母出现的次数，每次滑动之后进行判断，看是否符合条件。
+
+```python
+class Solution:
+    def findAnagrams(self, s: str, p: str) -> List[int]:
+
+        def check_same(p_count, curr_count):
+            for i in range(len(p_count)):
+                if p_count[i] != curr_count[i]:
+                    return False
+            return True
+        m = len(s)
+        n = len(p)
+        ans = []
+        p_count = [0]*26
+        curr_count = [0]*26
+        if n > m:
+            return ans
+        for i in range(n):
+            p_count[ord(p[i])-ord('a')] += 1
+
+        left = right = 0
+        for right in range(m):
+            if right < n-1:
+                curr_count[ord(s[right])-ord('a')] += 1
+            else:
+                curr_count[ord(s[right])-ord('a')] += 1
+                if check_same(p_count, curr_count):
+                    ans.append(left)
+                curr_count[ord(s[left])-ord('a')] -= 1
+                left += 1
+                right += 1
+        return ans
+
+
+
+```
+
+---
+
+
+
 ### 543-二叉树的直径
 
 给你一棵二叉树的根节点，返回该树的 **直径** 。
