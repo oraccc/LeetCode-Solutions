@@ -768,6 +768,39 @@ class Solution:
 
 
 
+### 128-最长连续序列
+
+给定一个未排序的整数数组 `nums` ，找出数字连续的最长序列（不要求序列元素在原数组中连续）的长度。
+
+请你设计并实现时间复杂度为 `O(n)` 的算法解决此问题。
+
+**思路**
+
+如果已知有一个 x,x+1,x+2,⋯,x+y 的连续序列，而我们却重新从 x+1，x+2 或者是 x+y 处开始尝试匹配，那么得到的结果肯定不会优于枚举 x 为起点的答案，因此我们在外层循环的时候碰到这种情况跳过即可。
+
+那么怎么判断是否跳过呢？由于我们要枚举的数 x 一定是在数组中不存在**前驱数 x−1** 的，不然按照上面的分析我们会从 x−1 开始尝试匹配，因此我们每次在哈希表中检查是否存在 x−1 即能判断是否需要跳过了。
+
+```python
+class Solution:
+    def longestConsecutive(self, nums: List[int]) -> int:
+        if not nums:
+            return 0
+        max_length = 1
+        nums = set(nums)
+        for num in nums:
+            if num-1 not in nums:
+                start = num
+                while num+1 in nums:
+                    num += 1
+
+                max_length = max(max_length, num-start+1)
+        return max_length
+```
+
+---
+
+
+
 ### 136-只出现一次的数字
 
 给你一个 **非空** 整数数组 `nums` ，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。
