@@ -608,6 +608,38 @@ class Solution:
 
 
 
+### 78-子集
+
+给你一个整数数组 `nums` ，数组中的元素 **互不相同** 。返回该数组所有可能的
+
+子集（幂集）。
+
+解集 **不能** 包含重复的子集。你可以按 **任意顺序** 返回解集。
+
+**思路**
+
+我们需要用回溯法来解决这一类问题。首先考虑因为回答中不能有重复的元素，因此我们需要用下标来限制取数的范围，backtracking(i)则代表目前从i这个下表开始取数。每次取数的时候都需要将当前的结果放进答案中。而下一个数的取值范围就从当前取值位的下一位开始，能保证不重复。
+
+```python
+class Solution:
+    def subsets(self, nums: List[int]) -> List[List[int]]:
+        n = len(nums)
+        ans = []
+        curr = []
+        def backtracking(i):
+            ans.append(curr[:])
+            for j in range(i, n):
+                curr.append(nums[j])
+                backtracking(j+1)
+                curr.pop()
+        backtracking(0)
+        return ans
+```
+
+---
+
+
+
 ### 94-二叉树的中序遍历
 
 给定一个二叉树的根节点 `root` ，返回 *它的 **中序** 遍历* 。
@@ -736,6 +768,39 @@ class Solution:
             return 0
         else:
             return 1+max(self.maxDepth(root.left), self.maxDepth(root.right))
+```
+
+---
+
+
+
+### 108-将有序数组转换为二叉搜索树
+
+给你一个整数数组 `nums` ，其中元素已经按 **升序** 排列，请你将其转换为一棵 平衡 二叉搜索树。
+
+**平衡二叉树** 是指该树所有节点的左右子树的深度相差不超过 1。
+
+**思路**
+
+平衡二叉树由于是左右差不多长的，因此只需要找到中间的节点，然后将左边的一半给左子树，右边的一半给右子树，递归处理即可。
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def sortedArrayToBST(self, nums: List[int]) -> Optional[TreeNode]:
+        n = len(nums)
+        if n == 0:
+            return None
+        mid = nums[n//2]
+        root = TreeNode(mid)
+        root.left = self.sortedArrayToBST(nums[:n//2])
+        root.right = self.sortedArrayToBST(nums[n//2+1:])
+        return root
 ```
 
 ---
