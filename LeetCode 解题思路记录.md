@@ -1097,6 +1097,72 @@ class Solution:
 
 
 
+### 199-二叉树的右视图
+
+给定一个二叉树的 **根节点** `root`，想象自己站在它的右侧，按照从顶部到底部的顺序，返回从右侧所能看到的节点值。
+
+**思路1**
+
+层次遍历，每次返回层次遍历中的最后一个值
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def rightSideView(self, root: Optional[TreeNode]) -> List[int]:
+        ans = []
+        if not root:
+            return ans
+        queue = []
+        queue.append(root)
+        while queue:
+            n = len(queue)
+            curr = []
+            for _ in range(n):
+                node = queue.pop(0)
+                curr.append(node.val)
+                if node.left:
+                    queue.append(node.left)
+                if node.right:
+                    queue.append(node.right)
+            ans.append(curr[-1])
+        return ans
+```
+
+**思路2**
+
+递归，先递归右子树，再递归左子树，当某个深度首次到达时，对应的节点就在右视图中。
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def rightSideView(self, root: Optional[TreeNode]) -> List[int]:
+        ans = []
+        def dfs(node, depth):
+            if not node:
+                return
+            if len(ans) == depth:
+                ans.append(node.val)
+            dfs(node.right, depth+1)
+            dfs(node.left, depth+1)
+
+        dfs(root, 0)
+        return ans
+```
+
+---
+
+
+
 ### 200-岛屿数量
 
 给你一个由 `'1'`（陆地）和 `'0'`（水）组成的的二维网格，请你计算网格中岛屿的数量。
