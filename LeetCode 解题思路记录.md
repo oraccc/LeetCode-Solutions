@@ -255,6 +255,46 @@ class Solution:
 
 
 
+### 24-两两交换链表中的节点
+
+给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。
+
+**思路**
+
+注意需要设置一个prev节点，它和curr节点在需要交换位置的时候，相差两个位置，这样便可完成指针的交换，可以画图来帮助指针的下一位交换。
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def swapPairs(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        dummy_head = ListNode(-1)
+        dummy_head.next = head
+        prev = dummy_head
+        curr = head
+        k = 0
+        while curr:
+            k += 1
+            if k == 2:
+                k = 0
+                tmp = curr.next
+                curr.next = prev.next
+                prev.next.next = tmp
+                prev.next = curr
+                prev = curr.next
+                curr = tmp
+            else:
+                curr = curr.next
+        return dummy_head.next
+```
+
+---
+
+
+
 ### 35-搜索插入位置
 
 给定一个排序数组和一个目标值，在数组中找到目标值，并返回其索引。如果目标值不存在于数组中，返回它将会被按顺序插入的位置。
