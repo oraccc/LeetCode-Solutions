@@ -295,6 +295,64 @@ class Solution:
 
 
 
+### 25-k个一组翻转链表
+
+给你链表的头节点 `head` ，每 `k` 个节点一组进行翻转，请你返回修改后的链表。
+
+`k` 是一个正整数，它的值小于或等于链表的长度。如果节点总数不是 `k` 的整数倍，那么请将最后剩余的节点保持原有顺序。
+
+你不能只是单纯的改变节点内部的值，而是需要实际进行节点交换。
+
+<img src="https://assets.leetcode.com/uploads/2020/10/03/reverse_ex2.jpg" style="zoom: 80%;" />
+
+**思路**
+
+结合逆转链表，依次取出k个链表来，逆转，注意需要保存在逆转开始前的那个prev节点，可以用画图的方式更好地辅助理解。
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def reverse_link(self, head):
+        prev = None
+        curr = head
+        while curr:
+            tmp = curr.next
+            curr.next = prev
+            prev = curr
+            curr = tmp
+        return prev
+
+
+    def reverseKGroup(self, head: Optional[ListNode], k: int) -> Optional[ListNode]:
+        dummy_head = ListNode(-1)
+        dummy_head.next = head
+        prev = dummy_head
+        curr = head
+        count = 0
+        while curr:
+            count += 1
+            if count == k:
+                count = 0
+                tmp = curr.next
+                curr.next = None
+                prev.next = self.reverse_link(prev.next)
+                while prev.next:
+                    prev = prev.next
+                prev.next = tmp
+                curr = tmp
+            else:
+                curr = curr.next
+        return dummy_head.next
+```
+
+---
+
+
+
 ### 35-搜索插入位置
 
 给定一个排序数组和一个目标值，在数组中找到目标值，并返回其索引。如果目标值不存在于数组中，返回它将会被按顺序插入的位置。
