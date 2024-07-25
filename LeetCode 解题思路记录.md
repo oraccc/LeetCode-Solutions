@@ -1543,6 +1543,43 @@ class Solution:
 
 
 
+### 230-二叉搜索树中第k小的元素
+
+给定一个二叉搜索树的根节点 `root` ，和一个整数 `k` ，请你设计一个算法查找其中第 `k` 小的元素（从 1 开始计数）。
+
+**思路**
+
+计算目前节点的左子树的全部节点数目，如果这个节点数目大于k，说明目标在左边，递归；如果是k+1，说明目标就是当前的根节点；最后，说明目标在右边的树上，递归的时候，记得减去相应的数目（左子树全部的数量+1）
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def count_nodes(self, root):
+        if not root:
+            return 0
+        else:
+            return 1+self.count_nodes(root.left)+self.count_nodes(root.right)
+
+    
+    def kthSmallest(self, root: Optional[TreeNode], k: int) -> int:
+        left_count = self.count_nodes(root.left)
+        if k == left_count + 1:
+            return root.val
+        elif k <= left_count:
+            return self.kthSmallest(root.left, k)
+        else:
+            return self.kthSmallest(root.right, k-(left_count+1))
+```
+
+---
+
+
+
 ### 234-回文链表
 
 给你一个单链表的头节点 `head` ，请你判断该链表是否为回文链表。如果是，返回 `true` ；否则，返回 `false` 。
