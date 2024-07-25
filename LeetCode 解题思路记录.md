@@ -954,6 +954,46 @@ class Solution:
 
 
 
+### 114-二叉树展开为链表
+
+给你二叉树的根结点 `root` ，请你将它展开为一个单链表：
+
+- 展开后的单链表应该同样使用 `TreeNode` ，其中 `right` 子指针指向链表中下一个结点，而左子指针始终为 `null` 。
+- 展开后的单链表应该与二叉树先序遍历顺序相同。
+
+**思路**
+
+利用递归处理，先拿到处理之后的左子树和右子树，此时两个应该都是链表，将左子树置空，然后将原来的左子树放到右边，然后再拼接右子树，最后然后当前的root。依次递归下去即可得到结果。
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def flatten(self, root: Optional[TreeNode]) -> None:
+        """
+        Do not return anything, modify root in-place instead.
+        """
+        if not root:
+            return
+        left_chain = self.flatten(root.left)
+        right_chain = self.flatten(root.right)
+        root.left = None
+        root.right = left_chain
+        curr = root
+        while curr.right:
+            curr = curr.right
+        curr.right = right_chain
+        return root
+```
+
+---
+
+
+
 ### 118-杨辉三角
 
 给定一个非负整数 *`numRows`，*生成「杨辉三角」的前 *`numRows`* 行。
