@@ -990,6 +990,49 @@ class Solution:
 
 
 
+### 113-路径总和II
+
+给你二叉树的根节点 `root` 和一个整数目标和 `targetSum` ，找出所有 **从根节点到叶子节点** 路径总和等于给定目标和的路径。
+
+**叶子节点** 是指没有子节点的节点。
+
+**思路**
+
+使用回溯法的时候需要注意，在进入回溯和离开回溯的时候，应该要保证前后状态是一样的，不然的话会出错，尤其是到了最后要结束的部分更要小心。可以模拟最后一步的状态来判断会不会出错。
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def pathSum(self, root: Optional[TreeNode], targetSum: int) -> List[List[int]]:
+        ans = []
+        curr = []
+
+        def dfs_helper(root, target):
+            if not root:
+                return
+            curr.append(root.val)
+            target -= root.val
+            if not root.left and not root.right:
+                if target == 0:
+                    ans.append(curr[:])
+            dfs_helper(root.left, target)
+            dfs_helper(root.right, target)
+            curr.pop()
+        
+        dfs_helper(root, targetSum)
+        return ans
+
+```
+
+---
+
+
+
 ### 114-二叉树展开为链表
 
 给你二叉树的根结点 `root` ，请你将它展开为一个单链表：
