@@ -2205,6 +2205,36 @@ class Solution:
 
 
 
+### 322-零钱兑换
+
+给你一个整数数组 `coins` ，表示不同面额的硬币；以及一个整数 `amount` ，表示总金额。
+
+计算并返回可以凑成总金额所需的 **最少的硬币个数** 。如果没有任何一种硬币组合能组成总金额，返回 `-1` 。
+
+你可以认为每种硬币的数量是无限的。
+
+**思路**
+
+该题的思路也是动态规划，可以参考“279-完全平方数”的写法。注意有可能不能凑成总金额。
+
+```python
+class Solution:
+    def coinChange(self, coins: List[int], amount: int) -> int:
+        dp = [amount+1] * (amount+1)
+        dp[0] = 0
+        for i in range(1, amount+1):
+            for coin in coins:
+                if coin <= i:
+                    dp[i] = min(dp[i], dp[i-coin]+1)
+        if dp[amount] == amount+1:
+            return -1
+        return dp[amount]
+```
+
+---
+
+
+
 ### 394-字符串解码
 
 给定一个经过编码的字符串，返回它解码后的字符串。
