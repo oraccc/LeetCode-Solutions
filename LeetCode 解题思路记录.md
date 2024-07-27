@@ -140,6 +140,53 @@ class Solution:
 
 
 
+### 17-电话号码的字母组合
+
+给定一个仅包含数字 `2-9` 的字符串，返回所有它能表示的字母组合。答案可以按 **任意顺序** 返回。
+
+给出数字到字母的映射如下（与电话按键相同）。注意 1 不对应任何字母。
+
+![](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2021/11/09/200px-telephone-keypad2svg.png)
+
+**思路**
+
+使用回溯进行处理，注意进入回溯和离开回溯的前后状态应该是一致的。
+
+```python
+class Solution:
+    def letterCombinations(self, digits: str) -> List[str]:
+        letter_dict = {
+            "2": ["a", "b", "c"],
+            "3": ["d", "e", "f"],
+            "4": ["g", "h", "i"],
+            "5": ["j", "k", "l"],
+            "6": ["m", "n", "o"],
+            "7": ["p", "q", "r", "s"],
+            "8": ["t", "u", "v"],
+            "9": ["w", "x", "y", "z"]
+        }
+        curr = []
+        ans = []
+        if len(digits) == 0:
+            return ans
+
+        def backtracking(i):
+            if i == len(digits):
+                ans.append("".join(curr[:]))
+                return
+            letter_list = letter_dict[digits[i]]
+            for letter in letter_list:
+                curr.append(letter)
+                backtracking(i+1)
+                curr.pop()
+        backtracking(0)
+        return ans
+```
+
+---
+
+
+
 ### 19-删除链表的倒数第N个结点
 
 给你一个链表，删除链表的倒数第 `n` 个结点，并且返回链表的头结点。
