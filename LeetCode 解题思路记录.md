@@ -613,6 +613,37 @@ class Solution:
 
 
 
+### 55-跳跃游戏
+
+给你一个非负整数数组 `nums` ，你最初位于数组的 **第一个下标** 。数组中的每个元素代表你在该位置可以跳跃的最大长度。
+
+判断你是否能够到达最后一个下标，如果可以，返回 `true` ；否则，返回 `false` 。
+
+**思路**
+
+使用动态规划，检查之前的格子能不能到达，如果可以的话再考虑能不能从那个格子出发。
+
+为了防止超时，循环的时候可以从靠近目前i的地方开始逆向遍历。
+
+```python
+class Solution:
+    def canJump(self, nums: List[int]) -> bool:
+        if len(nums) == 1:
+            return True
+        dp = [False]*len(nums)
+        dp[0] = True
+        for i in range(1, len(nums)):
+            for k in range(1, i+1):
+                if dp[i-k] and nums[i-k] >= k:
+                    dp[i] = True
+                    break
+        return dp[len(nums)-1]
+```
+
+---
+
+
+
 ### 56-合并区间
 
 以数组 `intervals` 表示若干个区间的集合，其中单个区间为 `intervals[i] = [starti, endi]` 。请你合并所有重叠的区间，并返回 *一个不重叠的区间数组，该数组需恰好覆盖输入中的所有区间* 。
