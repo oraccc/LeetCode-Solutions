@@ -482,6 +482,43 @@ class Solution:
 
 
 
+### 39-组合总和
+
+给你一个 **无重复元素** 的整数数组 `candidates` 和一个目标整数 `target` ，找出 `candidates` 中可以使数字和为目标数 `target` 的 所有 **不同组合** ，并以列表形式返回。你可以按 **任意顺序** 返回这些组合。
+
+`candidates` 中的 **同一个** 数字可以 **无限制重复被选取** 。如果至少一个数字的被选数量不同，则两种组合是不同的。 
+
+对于给定的输入，保证和为 `target` 的不同组合数少于 `150` 个。
+
+ **思路**
+
+使用回溯算法，每次循环的时候范围取当前位置到最后一个位置。注意当前位置不是必须得取的，因此不要在循环的外面append和pop，不然的话答案一定会包含当前位置的数，不符合题意。
+
+```python
+class Solution:
+    def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
+        n = len(candidates)
+        curr = []
+        ans = []
+        def backtracking(pos):
+            if sum(curr) > target:
+                return
+            if sum(curr) == target:
+                ans.append(curr[:])
+            
+            for i in range(pos, n):
+                curr.append(candidates[i])
+                backtracking(i)
+                curr.pop()
+
+        backtracking(0)
+        return ans
+```
+
+---
+
+
+
 ### 46-全排列
 
 给定一个不含重复数字的数组 `nums` ，返回其 *所有可能的全排列* 。你可以 **按任意顺序** 返回答案。
