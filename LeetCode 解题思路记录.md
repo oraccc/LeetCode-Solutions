@@ -662,6 +662,91 @@ class Solution:
 
 
 
+### 74-搜索二维矩阵
+
+给你一个满足下述两条属性的 `m x n` 整数矩阵：
+
+- 每行中的整数从左到右按非严格递增顺序排列。
+- 每行的第一个整数大于前一行的最后一个整数。
+
+给你一个整数 `target` ，如果 `target` 在矩阵中，返回 `true` ；否则，返回 `false` 。
+
+ **思路1**
+
+进行两次二分法搜索
+
+这个时候要注意，第一次搜索的时候，直接对每一行最后一个元素进行二分搜索，因为我们需要的情况是最后停止搜索的位置总是小于等于target。第二次搜索的时候，也是一样的，因此两次都是`mid >= target`来移动右指针。注意每次搜索完需要检查指针有没有越界，如果越界了就说明没有符合的（太大了），不用判断直接返回False。
+
+```python
+class Solution:
+    def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:
+        n = len(matrix)
+        m = len(matrix[0])
+        left = 0
+        right = n
+        while left < right:
+            mid = (left+right)//2
+            if matrix[mid][-1] >= target:
+                right = mid
+            else:
+                left = mid+1
+        row = left
+        if row == n:
+            return False
+        left = 0
+        right = m
+        while left < right:
+            mid = (left+right)//2
+            if matrix[row][mid] >= target:
+                right = mid
+            else:
+                left = mid+1
+        
+        col = left
+        if col == m:
+            return False
+        return matrix[row][col] == target
+```
+
+**思路2**
+
+也可以搜索每一行的头元素，但是要注意此时判断条件为`mid > target`，同时也需要判断边界条件。是应该用大于还是大于等于应该用临界情况来进行判断即可。
+
+```python
+class Solution:
+    def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:
+        n = len(matrix)
+        m = len(matrix[0])
+        left = 0
+        right = n
+        while left < right:
+            mid = (left+right)//2
+            if matrix[mid][0] > target:
+                right = mid
+            else:
+                left = mid+1
+        row = left-1
+        if row == -1:
+            return False
+        left = 0
+        right = m
+        while left < right:
+            mid = (left+right)//2
+            if matrix[row][mid] >= target:
+                right = mid
+            else:
+                left = mid+1
+        
+        col = left
+        if col == m:
+            return False
+        return matrix[row][col] == target
+```
+
+---
+
+
+
 ### 75-颜色分类
 
 给定一个包含红色、白色和蓝色、共 `n` 个元素的数组 `nums` ，原地对它们进行排序，使得相同颜色的元素相邻，并按照红色、白色、蓝色顺序排列。
