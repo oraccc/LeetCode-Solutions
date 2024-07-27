@@ -1236,6 +1236,35 @@ class Solution:
 
 
 
+### 121-买卖股票的最佳时机
+
+给定一个数组 `prices` ，它的第 `i` 个元素 `prices[i]` 表示一支给定股票第 `i` 天的价格。
+
+你只能选择 **某一天** 买入这只股票，并选择在 **未来的某一个不同的日子** 卖出该股票。设计一个算法来计算你所能获取的最大利润。
+
+返回你可以从这笔交易中获取的最大利润。如果你不能获取任何利润，返回 `0` 。
+
+**思路**
+
+因为只能买卖一次，因此这是一个贪心算法的问题。只需要在最低的时候买进，在之后某一天最高的之后卖出即可。遍历整个数组，如果当天价格是比目前持有的低，那就持有当天的，反之则看如果卖出可以卖多少。最后取最大值即可。
+
+```python
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        hold = prices[0]
+        max_profit = 0
+        for i in range(1, len(prices)):
+            if prices[i] < hold:
+                hold = prices[i]
+            else:
+                max_profit = max(max_profit, prices[i]-hold)
+        return max_profit
+```
+
+---
+
+
+
 ### 128-最长连续序列
 
 给定一个未排序的整数数组 `nums` ，找出数字连续的最长序列（不要求序列元素在原数组中连续）的长度。
