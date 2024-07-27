@@ -990,6 +990,56 @@ class Solution:
 
 
 
+### 79-单词搜索
+
+给定一个 `m x n` 二维字符网格 `board` 和一个字符串单词 `word` 。如果 `word` 存在于网格中，返回 `true` ；否则，返回 `false` 。
+
+单词必须按照字母顺序，通过相邻的单元格内的字母构成，其中“相邻”单元格是那些水平相邻或垂直相邻的单元格。同一个单元格内的字母不允许被重复使用。
+
+**思路**
+
+建立一个二维数组visited，来确认有没有访问过。如果当前还没有找到，并且当前的位置值并不是word的位置，就应该继续递归。
+
+注意建立二维数组的时候，不要用`visited = [[False]*m]*n`，而是`[[False]*m for _ in range(n)]`，前者建立的是引用。
+
+```python
+class Solution:
+    def exist(self, board: List[List[str]], word: str) -> bool:
+        directions = [-1, 0, 1, 0, -1]
+        found = False
+        n = len(board)
+        m = len(board[0])
+        visited = [[False]*m for _ in range(n)]
+        curr = 0
+
+        def backtracking(i, j, curr):
+            nonlocal found
+            if found or board[i][j] != word[curr]:
+                return
+            if curr == len(word)-1:
+                found = True
+                return
+            visited[i][j] = True
+            for k in range(4):
+                row = i + directions[k]
+                col = j + directions[k+1]
+                if row >= 0 and row < n and col >= 0 and col < m and not visited[row][col]:
+                    backtracking(row, col, curr+1)
+
+            visited[i][j] = False
+        
+        for i in range(n):
+            for j in range(m):
+                if not found:
+                    backtracking(i, j, 0)
+        
+        return found
+```
+
+---
+
+
+
 ### 94-二叉树的中序遍历
 
 给定一个二叉树的根节点 `root` ，返回 *它的 **中序** 遍历* 。
