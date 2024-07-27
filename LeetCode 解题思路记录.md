@@ -1963,6 +1963,43 @@ class Solution:
 
 
 
+### 215-数组中的第k个最大的元素
+
+给定整数数组 `nums` 和整数 `k`，请返回数组中第 `k` 个最大的元素。
+
+请注意，你需要找的是数组排序后的第 `k` 个最大的元素，而不是第 `k` 个不同的元素。
+
+你必须设计并实现时间复杂度为 `O(n)` 的算法解决此问题。
+
+ **思路**
+
+第k个最大的元素其实就是k个最大元素中最小的那个，那么可以用最小堆去完成这个工作，最小堆的栈顶永远维持着最小的元素，只需要维持一个k个大小的最小堆即可。
+
+python中的最小堆语法：
+
+`heapq.heapify(heap)`：初始化一个最小堆；
+
+`heapq.heappush(heap, item)`：将元素加入最小堆中；
+
+`heapq.heappop(heap)`：取出堆顶的元素；
+
+如果想要实现最大堆，只需要每次放入堆的元素取反即可。
+
+```python
+class Solution:
+    def findKthLargest(self, nums: List[int], k: int) -> int:
+        heap = nums[:k]
+        heapq.heapify(heap)
+        for i in range(k, len(nums)):
+            heapq.heappush(heap, nums[i])
+            heapq.heappop(heap)
+        return heap[0]
+```
+
+---
+
+
+
 ### 226-翻转二叉树
 
 给你一棵二叉树的根节点 `root` ，翻转这棵二叉树，并返回其根节点。
