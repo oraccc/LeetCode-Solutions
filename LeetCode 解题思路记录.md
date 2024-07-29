@@ -2549,6 +2549,34 @@ class Solution:
 
 
 
+### 739-每日温度
+
+给定一个整数数组 `temperatures` ，表示每天的温度，返回一个数组 `answer` ，其中 `answer[i]` 是指对于第 `i` 天，下一个更高温度出现在几天后。如果气温在这之后都不会升高，请在该位置用 `0` 来代替。
+
+ **思路**
+
+根据题意，设置一个最小栈即可解决这个问题，当前温度比现在最低的还要低时，那就入栈，否则的话就出栈，直到目前已经是最小的值了。为了方便计算天数的差距，栈里面可以只需要放idx即可。
+
+```python
+class Solution:
+    def dailyTemperatures(self, temperatures: List[int]) -> List[int]:
+        n = len(temperatures)
+        ans = [0] * n
+        stack = []
+        for i in range(n):
+            while stack and temperatures[stack[-1]] < temperatures[i]:
+                prev = stack.pop(-1)
+                duration = i - prev
+                ans[prev] = duration
+            stack.append(i)
+
+        return ans
+```
+
+---
+
+
+
 ### 994-腐烂的橘子
 
 在给定的 `m x n` 网格 `grid` 中，每个单元格可以有以下三个值之一：
