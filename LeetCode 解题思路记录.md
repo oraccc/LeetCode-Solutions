@@ -302,6 +302,51 @@ class Solution:
 
 
 
+### 22-括号生成
+
+数字 `n` 代表生成括号的对数，请你设计一个函数，用于能够生成所有可能的并且 **有效的** 括号组合。
+
+**思路**
+
+每一步只有两个选择，要么添加左括号，要么添加右括号，每次进入回溯和结束回溯的状态要一致；由于要生成的是有效的，也就是右括号不能比左括号多，要额外多一个条件。
+
+```python
+class Solution:
+    def generateParenthesis(self, n: int) -> List[str]:
+        curr = []
+        ans = []
+        left = 0
+        right = 0
+
+        def backtracking():
+            nonlocal left
+            nonlocal right
+            if right > left:
+                return
+            if len(curr) == 2*n:
+                if left == right:
+                    ans.append("".join(curr))
+                return
+            curr.append("(")
+            left += 1
+            backtracking()
+            left -= 1
+            curr.pop()
+
+            curr.append(")")
+            right += 1
+            backtracking()
+            right -= 1
+            curr.pop()
+
+        backtracking()
+        return ans
+```
+
+---
+
+
+
 ### 24-两两交换链表中的节点
 
 给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。
@@ -1543,6 +1588,38 @@ class Solution:
         for num in nums:
             ans = ans^num
         return ans
+```
+
+---
+
+
+
+### 139-单词拆分
+
+给你一个字符串 `s` 和一个字符串列表 `wordDict` 作为字典。如果可以利用字典中出现的一个或多个单词拼接出 `s` 则返回 `true`。
+
+**注意：**不要求字典中出现的单词全部都使用，并且字典中的单词可以重复使用。
+
+**思路**
+
+使用动态规划，当前位置为True代表到当前位置是可以用dict中的单词进行拆分的。
+
+当前位置为True的条件当且仅当`dp[i-len(word)] and s[i-len(word):i] == word`，即前k个位置也是True，且这k的位置的字符正好构成一个dict中的单词。
+
+```python
+class Solution:
+    def wordBreak(self, s: str, wordDict: List[str]) -> bool:
+        n = len(s)
+        dp = [False]*(n+1)
+        dp[0] = True
+
+        for i in range(1, n+1):
+            for word in wordDict:
+                if i >= len(word):
+                    if dp[i-len(word)] and s[i-len(word):i] == word:
+                        dp[i] = True
+                        break 
+        return dp[n]
 ```
 
 ---
