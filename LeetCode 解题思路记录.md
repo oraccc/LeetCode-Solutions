@@ -2477,6 +2477,42 @@ class Solution:
 
 
 
+### 496-下一个更大元素I
+
+`nums1` 中数字 `x` 的 **下一个更大元素** 是指 `x` 在 `nums2` 中对应位置 **右侧** 的 **第一个** 比 `x` 大的元素。
+
+给你两个 **没有重复元素** 的数组 `nums1` 和 `nums2` ，下标从 **0** 开始计数，其中`nums1` 是 `nums2` 的子集。
+
+对于每个 `0 <= i < nums1.length` ，找出满足 `nums1[i] == nums2[j]` 的下标 `j` ，并且在 `nums2` 确定 `nums2[j]` 的 **下一个更大元素** 。如果不存在下一个更大元素，那么本次查询的答案是 `-1` 。
+
+返回一个长度为 `nums1.length` 的数组 `ans` 作为答案，满足 `ans[i]` 是如上所述的 **下一个更大元素** 。
+
+**思路**
+
+使用单调栈和哈希表即可解决。最后检查nums1中的元素在不在哈希表内，不在即可返回-1
+
+```python
+class Solution:
+    def nextGreaterElement(self, nums1: List[int], nums2: List[int]) -> List[int]:
+        stack = []
+        hash_dict = {}
+        for num in nums2:
+            while stack and stack[-1] < num:
+                prev = stack.pop(-1)
+                hash_dict[prev] = num
+            stack.append(num)
+        
+        ans = []
+        for num in nums1:
+            ans.append(hash_dict.get(num, -1))
+        return ans
+
+```
+
+---
+
+
+
 ### 543-二叉树的直径
 
 给你一棵二叉树的根节点，返回该树的 **直径** 。
