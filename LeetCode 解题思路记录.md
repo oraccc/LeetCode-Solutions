@@ -2375,6 +2375,43 @@ class Solution:
 
 
 
+### 347-前K个高频元素
+
+给你一个整数数组 `nums` 和一个整数 `k` ，请你返回其中出现频率前 `k` 高的元素。你可以按 **任意顺序** 返回答案。
+
+ **思路**
+
+首先使用一个dict来统计每一个元素出现的频率，接着使用最小堆来维持k个最大的频率。
+
+注意我们希望最小堆比较的每个元素的频率，而不是每个元素本身的大小！
+
+使用`(freq, key)`这样的元组作为堆的元素是因为`heapq`库默认是最小堆，而我们希望根据频率（即元组的第一个元素）对元素进行排序。
+
+```python
+class Solution:
+    def topKFrequent(self, nums: List[int], k: int) -> List[int]:
+        freq = collections.defaultdict(int)
+        for num in nums:
+            freq[num] += 1
+        
+        uniques = list(freq.keys())
+        heap = []
+        for num in uniques:
+            if len(heap) < k:
+                heapq.heappush(heap, (freq[num], num))
+            else:
+                if freq[num] > heap[0][0]:
+                    heapq.heappush(heap, (freq[num], num))
+                    heapq.heappop(heap)
+        
+        ans = [x[1] for x in heap]
+        return ans
+```
+
+---
+
+
+
 ### 394-字符串解码
 
 给定一个经过编码的字符串，返回它解码后的字符串。
