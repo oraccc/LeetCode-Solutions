@@ -1722,6 +1722,39 @@ class Solution:
 
 
 
+### 152-乘积最大子数组
+
+给你一个整数数组 `nums` ，请你找出数组中乘积最大的非空连续子数组（该子数组中至少包含一个数字），并返回该子数组所对应的乘积。
+
+测试用例的答案是一个 **32-位** 整数。
+
+**思路**
+
+这题与第53题的思路很像，但是要注意负数乘负数可以变成正数，所以解这题的时候我们需要维护两个变量，当前的最大值，以及最小值，最小值可能为负数，但没准下一步乘以一个负数，当前的最大值就变成最小值，而最小值则变成最大值了。
+
+我们的动态方程可能这样：
+
+`maxDP[i + 1] = max(maxDP[i] * A[i + 1], A[i + 1],minDP[i] * A[i + 1])`
+`minDP[i + 1] = min(minDP[i] * A[i + 1], A[i + 1],maxDP[i] * A[i + 1])`
+
+
+
+
+```python
+class Solution:
+    def maxProduct(self, nums: List[int]) -> int:
+        max_dp = nums[:]
+        min_dp = nums[:]
+        for i in range(1, len(nums)):
+            max_dp[i] = max(nums[i], max_dp[i-1]*nums[i], min_dp[i-1]*nums[i])
+            min_dp[i] = min(nums[i], max_dp[i-1]*nums[i], min_dp[i-1]*nums[i])
+        return max(max_dp)
+```
+
+---
+
+
+
 ### 155-最小栈
 
 设计一个支持 `push` ，`pop` ，`top` 操作，并能在常数时间内检索到最小元素的栈。
