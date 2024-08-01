@@ -678,6 +678,56 @@ class Solution:
 
 
 
+### 51-N皇后
+
+按照国际象棋的规则，皇后可以攻击与之处在同一行或同一列或同一斜线上的棋子。
+
+**n 皇后问题** 研究的是如何将 `n` 个皇后放置在 `n×n` 的棋盘上，并且使皇后彼此之间不能相互攻击。
+
+给你一个整数 `n` ，返回所有不同的 **n 皇后问题** 的解决方案。
+
+每一种解法包含一个不同的 **n 皇后问题** 的棋子放置方案，该方案中 `'Q'` 和 `'.'` 分别代表了皇后和空位。
+
+**思路**
+
+可以使用回溯法，尝试每一种解。我们对行的元素进行遍历
+
+每次考虑在这一行的每一列，我们能不能放下这一棋子。如果可以放下就往下移动一行，直到结束。
+
+对于能不能放下的判断，只需要维持一个列，左斜和右斜的布尔数组即可。
+
+```python
+class Solution:
+    def solveNQueens(self, n: int) -> List[List[str]]:
+        col = [False]*n 
+        left_diag = [False]*(2*n+1)
+        right_diag = [False]*(2*n+1)
+        board = [["."]*n for _ in range(n)]
+        ans = []
+
+        def backtracking(row):
+            if row == n:
+                tmp = ["".join(each_row) for each_row in board]
+                ans.append(tmp)
+                return
+
+            for i in range(n):
+                if not col[i] and not left_diag[n-1-i+row] and not right_diag[i+row]:
+                    board[row][i] = "Q"
+                    col[i] = left_diag[n-1-i+row] = right_diag[i+row] = True
+                    backtracking(row+1)
+                    col[i] = left_diag[n-1-i+row] = right_diag[i+row] = False
+                    board[row][i] = "."
+        backtracking(0)
+        return ans
+
+
+```
+
+---
+
+
+
 ### 53-最大子数组和
 
 给你一个整数数组 `nums` ，请你找出一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。**子数组**是数组中的一个连续部分。
