@@ -1364,6 +1364,38 @@ class Solution:
 
 
 
+### 106-从中序与后序遍历序列构造二叉树
+
+给定两个整数数组 `inorder` 和 `postorder` ，其中 `inorder` 是二叉树的中序遍历， `postorder` 是同一棵树的后序遍历，请你构造并返回这颗 *二叉树* 。
+
+**思路**
+
+与105题类似，注意计算即可 
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def buildTree(self, inorder: List[int], postorder: List[int]) -> Optional[TreeNode]:
+        if not inorder or not postorder:
+            return None
+        val = postorder[-1]
+        root = TreeNode(val)
+        in_pos = inorder.index(val)
+        right_len = len(inorder)-in_pos-1
+        root.left = self.buildTree(inorder[:in_pos], postorder[:in_pos])
+        root.right = self.buildTree(inorder[in_pos+1:], postorder[in_pos:-1])
+        return root
+```
+
+---
+
+
+
 ### 108-将有序数组转换为二叉搜索树
 
 给你一个整数数组 `nums` ，其中元素已经按 **升序** 排列，请你将其转换为一棵 平衡 二叉搜索树。
