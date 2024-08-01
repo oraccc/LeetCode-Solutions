@@ -728,6 +728,43 @@ class Solution:
 
 
 
+### 52-N皇后II
+
+**n 皇后问题** 研究的是如何将 `n` 个皇后放置在 `n × n` 的棋盘上，并且使皇后彼此之间不能相互攻击。
+
+给你一个整数 `n` ，返回 **n 皇后问题** 不同的解决方案的数量。
+
+**思路**
+
+思路和51题十分相同，只是换了一个返回值。
+
+```python
+class Solution:
+    def totalNQueens(self, n: int) -> int:
+        col = [False]*n 
+        left_diag = [False]*(2*n+1)
+        right_diag = [False]*(2*n+1)
+        ans = 0
+
+        def backtracking(row):
+            nonlocal ans
+            if row == n:
+                ans += 1
+                return
+            for i in range(n):
+                if not col[i] and not left_diag[n-1-i+row] and not right_diag[i+row]:
+                    col[i] = left_diag[n-1-i+row] = right_diag[i+row] = True
+                    backtracking(row+1)
+                    col[i] = left_diag[n-1-i+row] = right_diag[i+row] = False
+        backtracking(0)
+        return ans
+
+```
+
+---
+
+
+
 ### 53-最大子数组和
 
 给你一个整数数组 `nums` ，请你找出一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。**子数组**是数组中的一个连续部分。
