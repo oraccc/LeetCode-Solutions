@@ -1331,6 +1331,39 @@ class Solution:
 
 
 
+### 105-从前序与中序遍历构造二叉树
+
+给定两个整数数组 `preorder` 和 `inorder` ，其中 `preorder` 是二叉树的**先序遍历**， `inorder` 是同一棵树的**中序遍历**，请构造二叉树并返回其根节点。
+
+**思路**
+
+因为当前先序遍历的第一个数就是根节点，再根据根节点到inorder中去确定左子树的长度，这样便可以依次递归下去了。
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def buildTree(self, preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:
+
+        if not preorder or not inorder:
+            return None
+        val = preorder[0]
+        root = TreeNode(val)
+        in_pos = inorder.index(val)
+        left_len = in_pos
+        root.left = self.buildTree(preorder[1:1+left_len], inorder[0:in_pos])
+        root.right = self.buildTree(preorder[1+left_len:], inorder[in_pos+1:])
+        return root
+```
+
+---
+
+
+
 ### 108-将有序数组转换为二叉搜索树
 
 给你一个整数数组 `nums` ，其中元素已经按 **升序** 排列，请你将其转换为一棵 平衡 二叉搜索树。
