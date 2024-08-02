@@ -2941,6 +2941,43 @@ class Solution:
 
 
 
+### 647-回文子串
+
+给你一个字符串 `s` ，请你统计并返回这个字符串中 **回文子串** 的数目。
+
+**回文字符串** 是正着读和倒过来读一样的字符串。
+
+**子字符串** 是字符串中的由连续字符组成的一个序列。
+
+**思路**
+
+和第5题的思路一样，只是返回的结果不一样。
+
+使用dp去从下到上，从左到右进行遍历。
+
+```python
+class Solution:
+    def countSubstrings(self, s: str) -> int:
+        n = len(s)
+        dp = [[False]*n for _ in range(n)]
+        count = 0
+
+        for i in range(n-1, -1, -1):
+            for j in range(i, n):
+                if j-i <= 1 and s[i] == s[j]:
+                    dp[i][j] = True
+                    count += 1
+                elif dp[i+1][j-1] and s[i] == s[j]:
+                    dp[i][j] = True
+                    count += 1
+        
+        return count
+```
+
+---
+
+
+
 ### 739-每日温度
 
 给定一个整数数组 `temperatures` ，表示每天的温度，返回一个数组 `answer` ，其中 `answer[i]` 是指对于第 `i` 天，下一个更高温度出现在几天后。如果气温在这之后都不会升高，请在该位置用 `0` 来代替。
