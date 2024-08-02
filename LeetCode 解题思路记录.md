@@ -105,6 +105,46 @@ class Solution:
 
 
 
+### 5-最长回文子串
+
+给你一个字符串 `s`，找到 `s` 中最长的 回文子串。
+
+**思路**
+
+由于回文字符串可以通过向外面添加两个相同的字符进行延伸，因此考虑使用dp\[i]\[j]，代表从字符串的i位置到字符串的j位置的字符是不是回文。考虑到递推公式是
+
+`dp[i+1][j-1] and s[i] == s[j]`，注意到在i位置的时候会需要后面的信息，因此我们对于i要倒着遍历，而j则是正常的遍历。可以画图更好地理解这个思路。
+
+注意对于长度是1或者2的字符串要特别处理。
+
+```python
+class Solution:
+    def longestPalindrome(self, s: str) -> str:
+        n = len(s)
+        dp = [[False] * n for _ in range(n)]
+        max_len = 1
+        max_start = 0
+
+        for i in range(n-1, -1, -1):
+            for j in range(i, n):
+                if j-i <= 1 and s[i] == s[j]:
+                    dp[i][j] = True
+                    if j-i+1 > max_len:
+                        max_len = j-i+1
+                        max_start = i 
+                elif dp[i+1][j-1] and s[i] == s[j]:
+                    dp[i][j] = True
+                    if j-i+1 > max_len:
+                        max_len = j-i+1
+                        max_start = i
+        
+        return s[max_start: max_start+max_len]
+```
+
+---
+
+
+
 ### 11-盛最多水的容器
 
 给定一个长度为 `n` 的整数数组 `height` 。有 `n` 条垂线，第 `i` 条线的两个端点是 `(i, 0)` 和 `(i, height[i])` 。
