@@ -1981,6 +1981,35 @@ class Solution:
 
 
 
+### 144-二叉树的前序遍历
+
+给你二叉树的根节点 `root` ，返回它节点值的 **前序** 遍历。
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def preorderTraversal(self, root: Optional[TreeNode]) -> List[int]:
+        ans = []
+
+        def helper(root):
+            if not root:
+                return
+            ans.append(root.val)
+            helper(root.left)
+            helper(root.right)
+        helper(root)
+        return ans
+```
+
+---
+
+
+
 ### 152-乘积最大子数组
 
 给你一个整数数组 `nums` ，请你找出数组中乘积最大的非空连续子数组（该子数组中至少包含一个数字），并返回该子数组所对应的乘积。
