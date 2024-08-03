@@ -2040,6 +2040,58 @@ class Solution:
 
 
 
+### 148-排序链表
+
+给你链表的头结点 `head` ，请将其按 **升序** 排列并返回 **排序后的链表** 。
+
+**思路**
+
+使用归并排序的思想。如果当前没有节点或者只有一个节点，直接返回即可。
+
+否则使用快慢指针将链表分成两个部分，然后分别对前半部分后面部分进行排序，对与排序好的结果，设置一个新的头部，然后就是合并两个链表的操作了。
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def sortList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        if not head or not head.next:
+            return head
+        slow = fast = head
+        while fast.next and fast.next.next:
+            slow = slow.next
+            fast = fast.next.next
+        half = slow.next
+        slow.next = None 
+        l = self.sortList(head)
+        r = self.sortList(half)
+
+        dummy_head = ListNode(-1)
+        curr = dummy_head
+        while l and r:
+            if l.val < r.val:
+                curr.next = l 
+                curr = curr.next
+                l = l.next
+            else:
+                curr.next = r
+                curr = curr.next
+                r = r.next
+        if l:
+            curr.next = l 
+        if r:
+            curr.next = r 
+        return dummy_head.next
+
+```
+
+---
+
+
+
 ### 152-乘积最大子数组
 
 给你一个整数数组 `nums` ，请你找出数组中乘积最大的非空连续子数组（该子数组中至少包含一个数字），并返回该子数组所对应的乘积。
