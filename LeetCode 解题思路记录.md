@@ -387,6 +387,48 @@ class Solution:
 
 
 
+### 23-合并K个升序链表
+
+给你一个链表数组，每个链表都已经按升序排列。
+
+请你将所有链表合并到一个升序链表中，返回合并后的链表。
+
+**思路**
+
+维持一个最小堆，大小为K，每一次只需要pop堆内的最小的元素就可以了，但是要注意ListNode没有自带的大小比较，因此需要提前写一个规则来比较大小。
+
+`ListNode.__lt__ = lambda a, b: a.val < b.val`
+
+
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def mergeKLists(self, lists: List[Optional[ListNode]]) -> Optional[ListNode]:
+        ListNode.__lt__ = lambda a, b: a.val < b.val
+        if not lists:
+            return None
+        heap = [head for head in lists if head]
+        heapq.heapify(heap)
+        dummy_head = ListNode(-1)
+        curr = dummy_head
+        while heap:
+            node = heapq.heappop(heap)
+            if node.next:
+                heapq.heappush(heap, node.next)
+            curr.next = node
+            curr = curr.next
+        return dummy_head.next
+```
+
+---
+
+
+
 ### 24-两两交换链表中的节点
 
 给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。
