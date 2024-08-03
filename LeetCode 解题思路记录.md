@@ -2010,6 +2010,36 @@ class Solution:
 
 
 
+### 145-二叉树的后序遍历
+
+给你一棵二叉树的根节点 `root` ，返回其节点值的 **后序遍历** 。
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def postorderTraversal(self, root: Optional[TreeNode]) -> List[int]:
+        ans = []
+
+        def helper(root):
+            if not root:
+                return
+            helper(root.left)
+            helper(root.right)
+            ans.append(root.val)
+        
+        helper(root)
+        return ans
+```
+
+---
+
+
+
 ### 152-乘积最大子数组
 
 给你一个整数数组 `nums` ，请你找出数组中乘积最大的非空连续子数组（该子数组中至少包含一个数字），并返回该子数组所对应的乘积。
