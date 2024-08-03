@@ -2195,6 +2195,75 @@ class Solution:
 
 
 
+### 173-二叉搜索树迭代器
+
+实现一个二叉搜索树迭代器类`BSTIterator` ，表示一个按中序遍历二叉搜索树（BST）的迭代器：
+
+- `BSTIterator(TreeNode root)` 初始化 `BSTIterator` 类的一个对象。BST 的根节点 `root` 会作为构造函数的一部分给出。指针应初始化为一个不存在于 BST 中的数字，且该数字小于 BST 中的任何元素。
+- `boolean hasNext()` 如果向指针右侧遍历存在数字，则返回 `true` ；否则返回 `false` 。
+- `int next()`将指针向右移动，然后返回指针处的数字。
+
+注意，指针初始化为一个不存在于 BST 中的数字，所以对 `next()` 的首次调用将返回 BST 中的最小元素。
+
+你可以假设 `next()` 调用总是有效的，也就是说，当调用 `next()` 时，BST 的中序遍历中至少存在一个下一个数字。
+
+**思路**
+
+* 把递归转成迭代，基本想法就是用栈。
+* 迭代总体思路是：栈中只保留左节点。
+
+思路必须从递归的访问顺序说起：中序遍历的访问顺序是 `左子树 -> 根节点 -> 右子树` 的顺序，并且对 左子树 和 右子树 也进行递归。
+
+结合下图，实际访问节点的顺序是：
+
+* 从 根节点12 开始一路到底遍历到所有左节点，路径保存到栈中；此时栈为 [12, 6, 5]。
+* 弹出栈顶节点，即 叶子节点5 ；
+* 下一个栈顶元素是 该叶子节点 的 根节点6；
+* 然后把 该新的根节点的右子树9 一路到底遍历其所有左节点；栈为 [12, 9, 8, 7]。
+* 继续运行下去，直到栈为空。
+
+<img src="https://pic.leetcode-cn.com/1616898885-tLjlOD-173.001.jpeg" style="zoom:33%;" />
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class BSTIterator:
+
+    def __init__(self, root: Optional[TreeNode]):
+        self.stack = []
+        curr = root
+        while curr:
+            self.stack.append(curr)
+            curr = curr.left
+        
+
+    def next(self) -> int:
+        node = self.stack.pop()
+        curr = node.right
+        while curr:
+            self.stack.append(curr)
+            curr = curr.left
+        return node.val
+
+    def hasNext(self) -> bool:
+        return len(self.stack) > 0
+
+
+
+# Your BSTIterator object will be instantiated and called as such:
+# obj = BSTIterator(root)
+# param_1 = obj.next()
+# param_2 = obj.hasNext()
+```
+
+---
+
+
+
 ### 189-轮转数组
 
 给定一个整数数组 `nums`，将数组中的元素向右轮转 `k` 个位置，其中 `k` 是非负数。
