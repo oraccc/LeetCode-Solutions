@@ -2800,6 +2800,41 @@ class Solution:
 
 
 
+### 240-搜索二维矩阵II
+
+编写一个高效的算法来搜索 `*m* x *n*` 矩阵 `matrix` 中的一个目标值 `target` 。该矩阵具有以下特性：
+
+- 每行的元素从左到右升序排列。
+- 每列的元素从上到下升序排列。
+
+<img src="https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/11/25/searchgrid2.jpg" style="zoom:67%;" />
+
+**思路**
+
+从右上角往左下方看，就可以发现是一个类似于二叉搜索树的结构，对于每一个元素，比它大的元素在它的下面，比它小的元素在它的左边。因此起点是右上方，一旦搜索过程中出界了，就说明没有找到。
+
+```python
+class Solution:
+    def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:
+        n = len(matrix)
+        m = len(matrix[0])
+        curr_i = 0
+        curr_j = m-1
+        while curr_i >= 0 and curr_i < n and curr_j >= 0 and curr_j < m:
+            if matrix[curr_i][curr_j] == target:
+                return True
+            elif matrix[curr_i][curr_j] > target:
+                curr_j -= 1
+            else:
+                curr_i += 1
+        return False
+        
+```
+
+---
+
+
+
 ### 279-完全平方数
 
 给你一个整数 `n` ，返回 *和为 `n` 的完全平方数的最少数量* 。
