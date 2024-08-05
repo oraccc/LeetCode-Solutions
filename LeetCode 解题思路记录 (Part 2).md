@@ -942,6 +942,41 @@ class Solution:
 
 
 
+### 416-分割等和子集
+
+给你一个 **只包含正整数** 的 **非空** 数组 `nums` 。请你判断是否可以将这个数组分割成两个子集，使得两个子集的元素和相等。
+
+**思路**
+
+使用动态规划来解决这个问题，我们使用二维dp，其中`dp[i][j]`代表到下标为i的这个数位置，能不能组合成j这个目标数组，是一个0-1的背包问题，对于每一个数，我们可以选择放入或者不放入，如果放入，那么就是`dp[i-1][j-nums[i]]`，如果不放入，那么就是`dp[i][j-1]`。注意有些数可能太大了，所以不一定能放。最后只需要看二维数组的最后一个值就可以了。
+
+```python
+class Solution:
+    def canPartition(self, nums: List[int]) -> bool:
+        n = len(nums)
+        if sum(nums) % 2 == 1:
+            return False
+        target = sum(nums) // 2
+
+        dp = [[False]*(target+1) for _ in range(n)]
+        dp[0][0] = True
+        if nums[0] <= target:
+            dp[0][nums[0]] = True
+        
+        for i in range(1, n):
+            for j in range(target+1):
+                if nums[i] <= j:
+                    dp[i][j] = dp[i-1][j-nums[i]] or dp[i-1][j]
+                else:
+                    dp[i][j] = dp[i-1][j]
+        
+        return dp[n-1][target]
+```
+
+---
+
+
+
 ### 438-找到字符串中所有字母异位词
 
 给定两个字符串 `s` 和 `p`，找到 `s` 中所有 `p` 的 **异位词** 的子串，返回这些子串的起始索引。不考虑答案输出的顺序。
