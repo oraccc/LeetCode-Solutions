@@ -977,6 +977,47 @@ class Solution:
 
 
 
+### 437-路径总和III
+
+给定一个二叉树的根节点 `root` ，和一个整数 `targetSum` ，求该二叉树里节点值之和等于 `targetSum` 的 **路径** 的数目。
+
+**路径** 不需要从根节点开始，也不需要在叶子节点结束，但是路径方向必须是向下的（只能从父节点到子节点）。
+
+**思路**
+
+对于每一个节点，考虑两种情况，以这个节点为根节点，和以这个节点的左子树和右子树分为为根的情况。因此把需要计算根节点为起点的代码总结出来，然后递归左右子树。
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def rootSum(self, root, targetSum):
+        if not root:
+            return 0
+        count = 0
+        if root.val == targetSum:
+            count += 1
+        count += self.rootSum(root.left, targetSum-root.val)
+        count += self.rootSum(root.right, targetSum-root.val)
+        return count
+
+
+    def pathSum(self, root: Optional[TreeNode], targetSum: int) -> int:
+        if not root:
+            return 0
+        return self.rootSum(root, targetSum) + self.pathSum(root.left, targetSum) + self.pathSum(root.right, targetSum)
+        
+        
+```
+
+---
+
+
+
 ### 438-找到字符串中所有字母异位词
 
 给定两个字符串 `s` 和 `p`，找到 `s` 中所有 `p` 的 **异位词** 的子串，返回这些子串的起始索引。不考虑答案输出的顺序。
