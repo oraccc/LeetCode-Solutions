@@ -691,6 +691,60 @@ class Solution:
 
 
 
+### 45-跳跃游戏II
+
+给定一个长度为 `n` 的 **0 索引**整数数组 `nums`。初始位置为 `nums[0]`。
+
+每个元素 `nums[i]` 表示从索引 `i` 向前跳转的最大长度。换句话说，如果你在 `nums[i]` 处，你可以跳转到任意 `nums[i + j]` 处:
+
+- `0 <= j <= nums[i]` 
+- `i + j < n`
+
+返回到达 `nums[n - 1]` 的最小跳跃次数。生成的测试用例可以到达 `nums[n - 1]`。
+
+**思路1**
+
+使用动态规划即可，整体流程和55题类似，要注意有些点可能到不了，所以要保存一个n+1，代表没有办法到达的点。
+
+```python
+class Solution:
+    def jump(self, nums: List[int]) -> int:
+        n = len(nums)
+        dp = [n+1] * n
+        dp[0] = 0
+        for i in range(1, n):
+            for j in range(i):
+                if dp[j] != n+1 and i-j <= nums[j]:
+                    dp[i] = min(dp[i], dp[j]+1)
+
+        return dp[n-1]
+```
+
+**思路2**
+
+可以使用担心算法，记录一个当前可以到达的最远距离，如果当前最远的距离没有超过n，那么就循环，加上一次步数。每一个走的时候，就记录从现在位置开始走，能走到的最远距离是多少。下次直接从最远的距离开始走，就可以找到最小的步数。
+
+```python
+class Solution:
+    def jump(self, nums: List[int]) -> int:
+        count = 0
+        max_distance = 0
+        start = 0
+        
+        while max_distance < len(nums)-1:
+            count += 1
+            curr_max = max_distance
+            while start <= curr_max:
+                max_distance = max(max_distance, start+nums[start])
+                start += 1
+        
+        return count
+```
+
+---
+
+
+
 ### 46-全排列
 
 给定一个不含重复数字的数组 `nums` ，返回其 *所有可能的全排列* 。你可以 **按任意顺序** 返回答案。
