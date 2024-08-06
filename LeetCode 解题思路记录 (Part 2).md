@@ -672,6 +672,44 @@ class Solution:
 
 
 
+### 236-二叉树的最近公共祖先
+
+给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。
+
+百度百科中最近公共祖先的定义为：“对于有根树 T 的两个节点 p、q，最近公共祖先表示为一个节点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（**一个节点也可以是它自己的祖先**）。”
+
+**思路**
+
+如果当前节点就是p或者q，由于我们是从上往下遍历的，所以可以直接返回p或者q，这就是当前分支上祖先。对于每一个节点，检查其左边的分支和右边的分支是否都有返回，如果都有的话，那就是说明p，q正好在其一左一右，因此当前节点是公共祖先。如果只有一边的话，说明公共祖先在其中的一侧，返回那一侧的公共祖先。
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution:
+    def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+        if not root:
+            return None
+        if root == p or root == q:
+            return root
+        
+        left_return = self.lowestCommonAncestor(root.left, p, q)
+        right_return = self.lowestCommonAncestor(root.right, p, q)
+        if left_return and right_return:
+            return root
+        else:
+            return left_return if left_return else right_return
+        
+```
+
+---
+
+
+
 ### 238-除自身以外数组的乘积
 
 给你一个整数数组 `nums`，返回 数组 `answer` ，其中 `answer[i]` 等于 `nums` 中除 `nums[i]` 之外其余各元素的乘积 。
