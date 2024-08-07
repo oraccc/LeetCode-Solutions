@@ -180,6 +180,50 @@ class Solution:
 
 
 
+### 15-三数之和
+
+给你一个整数数组 `nums` ，判断是否存在三元组 `[nums[i], nums[j], nums[k]]` 满足 `i != j`、`i != k` 且 `j != k` ，同时还满足 `nums[i] + nums[j] + nums[k] == 0` 。请你返回所有和为 `0` 且不重复的三元组。
+
+**注意：**答案中不可以包含重复的三元组。
+
+**思路**
+
+注意因为本题要求不能有重复的答案，因此需要额外的去重工作。首先固定一个值，然后使用双指针左右查找即可。对于固定的值，首先判断是不是之前已经被选过了，如果已经被选过了，那么就不应该在被选，直接跳过。同理，如果双指针的值已经找到答案了，那么就应该同时移动左右两个指针（只移动移动的话，可能不会是答案的），一样的，这样的指针移动时也应该去重。
+
+```python
+class Solution:
+    def threeSum(self, nums: List[int]) -> List[List[int]]:
+        n = len(nums)
+        ans = []
+        nums.sort()
+        for i in range(n):
+            if nums[i] > 0:
+                return ans
+            if i >= 1 and nums[i] == nums[i-1]:
+                continue
+            target = -nums[i]
+            left = i+1
+            right = n-1
+            while left < right:
+                if nums[left] + nums[right] == target:
+                    ans.append([nums[i], nums[left], nums[right]])
+                    while left < right and nums[left] == nums[left+1]:
+                        left += 1
+                    while left < right and nums[right] == nums[right-1]:
+                        right -= 1
+                    left += 1
+                    right -= 1
+                elif nums[left] + nums[right] < target:
+                    left += 1
+                else:
+                    right -= 1
+        return ans
+```
+
+---
+
+
+
 ### 17-电话号码的字母组合
 
 给定一个仅包含数字 `2-9` 的字符串，返回所有它能表示的字母组合。答案可以按 **任意顺序** 返回。
@@ -684,6 +728,46 @@ class Solution:
                 curr.pop()
 
         backtracking(0)
+        return ans
+```
+
+---
+
+
+
+### 42-接雨水
+
+给定 `n` 个非负整数表示每个宽度为 `1` 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。
+
+<img src="https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/10/22/rainwatertrap.png" style="zoom: 80%;" />
+
+**思路**
+
+对于每一个位置，它可以承接的水的多少取决于左边最高的墙和右边最高的墙之间较小的那个值，因此我们只需要记录，对于每一个位置，它左边最高的位置是多少，和它右边最高的位置是多少即可。用两个数组遍历两次存储即可。
+
+```python
+class Solution:
+    def trap(self, height: List[int]) -> int:
+        n = len(height)
+        left_high = [0]*n
+        right_high = [0]*n
+        left_high[0] = height[0]
+        right_high[-1] = height[-1]
+        for i in range(1, n):
+            if height[i] > left_high[i-1]:
+                left_high[i] = height[i]
+            else:
+                left_high[i] = left_high[i-1]
+
+        for i in range(n-2, -1, -1):
+            if height[i] > right_high[i+1]:
+                right_high[i] = height[i]
+            else:
+                right_high[i] = right_high[i+1]
+        
+        ans = 0
+        for i in range(1, n-1):
+            ans += (min(left_high[i], right_high[i]) - height[i])
         return ans
 ```
 
