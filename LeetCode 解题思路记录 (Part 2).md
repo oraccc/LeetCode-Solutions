@@ -775,6 +775,28 @@ class Solution:
 
 
 
+### 268-丢失的数字
+
+给定一个包含 `[0, n]` 中 `n` 个数的数组 `nums` ，找出 `[0, n]` 这个范围内没有出现在数组中的那个数。
+
+**思路**
+
+将0至n和nums[0]至nums[n-1]一一异或，那么最后的答案就是只出现过一次的那个数字。
+
+```python
+class Solution:
+    def missingNumber(self, nums: List[int]) -> int:
+        ans = len(nums)
+        for i in range(len(nums)):
+            ans ^= nums[i]
+            ans ^= i
+        return ans
+```
+
+---
+
+
+
 ### 279-完全平方数
 
 给你一个整数 `n` ，返回 *和为 `n` 的完全平方数的最少数量* 。
