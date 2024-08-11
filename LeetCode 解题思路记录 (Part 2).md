@@ -1380,6 +1380,42 @@ class Solution:
 
 
 
+### 763-划分字母区间
+
+给你一个字符串 `s` 。我们要把这个字符串划分为尽可能多的片段，同一字母最多出现在一个片段中。
+
+注意，划分结果需要满足：将所有划分结果按顺序连接，得到的字符串仍然是 `s` 。
+
+返回一个表示每个字符串片段的长度的列表。
+
+**思路**
+
+此题的思路与合并区间的思路很像，因此我们需要记录每一个字母出现的最后一个位置。接着再次遍历整个字符串，记录当前可以合并的最大范围，如果在此范围内有可以达到更远距离的字母出现了，那么更新这个范围即可。如果到达了该范围，那么就可以将当前片段的长度输入了，为了方便我们还需要记录之前那个片段的结束位置，相减ji'ke
+
+```python
+class Solution:
+    def partitionLabels(self, s: str) -> List[int]:
+        last = collections.defaultdict(int)
+        for i in range(len(s)):
+            last[s[i]] = i 
+        
+        prev_last = -1
+        curr_last = last[s[0]]
+        ans = []
+        for i in range(len(s)):
+            curr_last = max(curr_last, last[s[i]])
+            if i == curr_last:
+                ans.append(curr_last-prev_last)
+                prev_last = curr_last
+            
+        return ans
+
+```
+
+---
+
+
+
 ### 994-腐烂的橘子
 
 在给定的 `m x n` 网格 `grid` 中，每个单元格可以有以下三个值之一：
