@@ -2139,6 +2139,55 @@ class Solution:
 
 
 
+### 131-分割回文串
+
+给你一个字符串 `s`，请你将 `s` 分割成一些子串，使每个子串都是 **回文串**。返回 `s` 所有可能的分割方案。
+
+**思路**
+
+使用回溯方法解决，每次dfs的时候，检查当前从start开始能否有子串满足要求，即`for end in range(start+1, n+1)`，如何有的话，就继续dfs。
+
+同时也需要建立一个函数来检查是否是有效的回文字符串。
+
+```python
+class Solution:
+    def partition(self, s: str) -> List[List[str]]:
+        n = len(s)
+
+        ans = []
+        curr = []
+
+        def backtracking(start):
+            if start == n:
+                ans.append(curr[:])
+                return
+            for end in range(start+1, n+1):
+                substr = s[start:end]
+                if is_valid(substr):
+                    curr.append(substr)
+                    backtracking(end)
+                    curr.pop()
+        
+        def is_valid(substr):
+            left = 0
+            right = len(substr)-1
+            while left < right:
+                if substr[left] != substr[right]:
+                    return False
+                else:
+                    left += 1
+                    right -= 1
+            return True
+
+        backtracking(0)
+
+        return ans
+```
+
+---
+
+
+
 ### 136-只出现一次的数字
 
 给你一个 **非空** 整数数组 `nums` ，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。
