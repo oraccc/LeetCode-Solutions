@@ -1390,7 +1390,7 @@ class Solution:
 
 **思路**
 
-此题的思路与合并区间的思路很像，因此我们需要记录每一个字母出现的最后一个位置。接着再次遍历整个字符串，记录当前可以合并的最大范围，如果在此范围内有可以达到更远距离的字母出现了，那么更新这个范围即可。如果到达了该范围，那么就可以将当前片段的长度输入了，为了方便我们还需要记录之前那个片段的结束位置，相减ji'ke
+此题的思路与合并区间的思路很像，因此我们需要记录每一个字母出现的最后一个位置。接着再次遍历整个字符串，记录当前可以合并的最大范围，如果在此范围内有可以达到更远距离的字母出现了，那么更新这个范围即可。如果到达了该范围，那么就可以将当前片段的长度输入了，为了方便我们还需要记录之前那个片段的结束位置，相减即可。
 
 ```python
 class Solution:
@@ -1511,4 +1511,28 @@ class Solution:
 ```
 
 ---
+
+
+
+### Extra-快速排序
+
+```python
+def quick_sort(nums, left, right):
+    if left >= right: return nums
+    pivot = nums[left]
+    low = left
+    high = right
+    while left < right:
+        while left < right and nums[right] >= pivot:
+            right -= 1
+        nums[left] = nums[right]
+        while left < right and nums[left] <= pivot:
+            left += 1
+        nums[right] = nums[left]
+
+    nums[right] = pivot
+    quick_sort(nums, low, left-1)
+    quick_sort(nums, left+1, high)
+    return nums
+```
 
