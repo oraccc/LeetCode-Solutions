@@ -475,3 +475,334 @@ class Solution:
 
 ---
 
+
+
+### 4-寻找两个正序数组的中位数
+
+给定两个大小分别为 `m` 和 `n` 的正序（从小到大）数组 `nums1` 和 `nums2`。请你找出并返回这两个正序数组的 **中位数** 。
+
+算法的时间复杂度应该为 `O(log (m+n))` 。
+
+**思路**
+
+我们把数组 A 和数组 B 分别在 i 和 j 进行切割。
+
+将 i 的左边和 j 的左边组合成「左半部分」，将 i 的右边和 j 的右边组合成「右半部分」。
+
+为了保证 max ( A [ i - 1 ] , B [ j - 1 ]）） <= min ( A [ i ] , B [ j ]）），因为 A 数组和 B 数组是有序的，所以 A [ i - 1 ] <= A [ i ]，B [ i - 1 ] <= B [ i ] 这是天然的，所以我们只需要保证 B [ j - 1 ] < = A [ i ] 和 A [ i - 1 ] <= B [ j ] 所以我们分两种情况讨论：
+
+* B [ j - 1 ] > A [ i ]，并且为了不越界，要保证 j != 0，i != m
+  * 此时很明显，我们需要增加 i 
+
+- A [ i - 1 ] > B [ j ] ，并且为了不越界，要保证 i != 0，j != n
+  - 此时和上边的情况相反，我们要减少 i ，增大 j 。
+
+- 当 i = 0, 或者 j = 0，也就是切在了最前边。
+  - 此时左半部分当 j = 0 时，最大的值就是 A [ i - 1 ] ；当 i = 0 时 最大的值就是 B [ j - 1] 。右半部分最小值和之前一样。
+- 当 i = m 或者 j = n，也就是切在了最后边。
+  - 此时左半部分最大值和之前一样。右半部分当 j = n 时，最小值就是 A [ i ] ；当 i = m 时，最小值就是B [ j ] 。
+
+所有的思路都理清了，最后一个问题，增加 i 的方式。当然用二分了。初始化 i 为中间的值，然后减半找中间的，减半找中间的，减半找中间的直到答案。
+
+```python
+class Solution:
+    def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:
+        n = len(nums1)
+        m = len(nums2)
+        if n > m:
+            nums1, nums2 = nums2, nums1
+            n, m = m, n
+        
+        i_min = 0
+        i_max = n
+        while i_min <= i_max:
+            i = (i_min + i_max)//2
+            j = (m+n+1)//2 - i
+            if i != 0 and j != m and nums1[i-1] > nums2[j]:
+                i_max = i
+            elif j != 0 and i != n and nums2[j-1] > nums1[i]:
+                i_min = i+1
+            else:
+                if i == 0:
+                    left_max = nums2[j-1]
+                elif j == 0:
+                    left_max = nums1[i-1]
+                else:
+                    left_max = max(nums1[i-1], nums2[j-1])
+
+                if (m+n) % 2 == 1:
+                    return left_max
+
+                if i == n:
+                    right_min = nums2[j]
+                elif j == m:
+                    right_min = nums1[i]
+                else:
+                    right_min = min(nums1[i], nums2[j])
+                
+                return (left_max + right_min)/2
+        return 0
+```
+
+---
+
+
+
+### 21-合并两个有序链表
+
+将两个升序链表合并为一个新的 **升序** 链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。 
+
+ **思路**
+
+注意循环条件是l1 and l2
+
+由于题目要求是拼接原来的链表，因此最好不要创建新的节点，直接对原来的链表做操作即可
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def mergeTwoLists(self, list1: Optional[ListNode], list2: Optional[ListNode]) -> Optional[ListNode]:
+        l1 = list1
+        l2 = list2
+        dummy_head = ListNode()
+        curr = dummy_head
+        while l1 and l2:
+            if l1.val <= l2.val:
+                curr.next = l1
+                l1 = l1.next
+            else:
+                curr.next = l2
+                l2 = l2.next
+            curr = curr.next
+            
+        if l1:
+            curr.next = l1
+        if l2:
+            curr.next = l2
+        return dummy_head.next
+
+```
+
+---
+
+
+
+### 53-最大子数组和
+
+给你一个整数数组 `nums` ，请你找出一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。**子数组**是数组中的一个连续部分。
+
+**思路**
+
+动态规划，dp[i]代表以nums[i]结尾的最大的连续子数组，因此若dp[i-1]时一个整数，那么加上目前的数一定是更大的连续子数组，否则就以自己重新开始。注意返回时，返回的是整个dp的最大值，因为并不能保证最大子数组一定是以最后一个元素结尾的。
+
+```python
+class Solution:
+    def maxSubArray(self, nums: List[int]) -> int:
+        n = len(nums)
+        dp = [0]*n
+        dp[0] = nums[0]
+        for i in range(1, n):
+            dp[i] = max(dp[i-1]+nums[i], nums[i])
+        return max(dp)
+```
+
+---
+
+
+
+### 200-岛屿数量
+
+给你一个由 `'1'`（陆地）和 `'0'`（水）组成的的二维网格，请你计算网格中岛屿的数量。
+
+岛屿总是被水包围，并且每座岛屿只能由水平方向和/或竖直方向上相邻的陆地连接形成。
+
+此外，你可以假设该网格的四条边均被水包围。
+
+**思路**
+
+一次遍历每一个点，如果发现是陆地，则岛屿数量加1，并使用dfs将相连的陆地全部找出来，并置为0，变为海洋，这样就不会重复计算陆地了
+
+```python
+class Solution:
+    def numIslands(self, grid: List[List[str]]) -> int:
+        n = len(grid)
+        m = len(grid[0])
+        directions = [-1, 0, 1, 0, -1]
+
+        def dfs_helper(i, j):
+            if grid[i][j] == "0":
+                return
+            grid[i][j] = "0"
+            for k in range(4):
+                row = i + directions[k]
+                col = j + directions[k+1]
+                if row < n and row >= 0 and col < m and col >= 0:
+                    dfs_helper(row, col)
+        
+        count = 0
+        for i in range(n):
+            for j in range(m):
+                if grid[i][j] == "1":
+                    count += 1
+                    dfs_helper(i, j)
+        return count
+
+    
+        
+```
+
+---
+
+
+
+
+
+### 25-k个一组翻转链表
+
+给你链表的头节点 `head` ，每 `k` 个节点一组进行翻转，请你返回修改后的链表。
+
+`k` 是一个正整数，它的值小于或等于链表的长度。如果节点总数不是 `k` 的整数倍，那么请将最后剩余的节点保持原有顺序。
+
+你不能只是单纯的改变节点内部的值，而是需要实际进行节点交换。
+
+<img src="https://assets.leetcode.com/uploads/2020/10/03/reverse_ex2.jpg" style="zoom: 80%;" />
+
+**思路**
+
+结合逆转链表，依次取出k个链表来，逆转，注意需要保存在逆转开始前的那个prev节点，可以用画图的方式更好地辅助理解。
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def reverse_link(self, head):
+        prev = None
+        curr = head
+        while curr:
+            tmp = curr.next
+            curr.next = prev
+            prev = curr
+            curr = tmp
+        return prev
+
+
+    def reverseKGroup(self, head: Optional[ListNode], k: int) -> Optional[ListNode]:
+        dummy_head = ListNode(-1)
+        dummy_head.next = head
+        prev = dummy_head
+        curr = head
+        count = 0
+        while curr:
+            count += 1
+            if count == k:
+                count = 0
+                tmp = curr.next
+                curr.next = None
+                prev.next = self.reverse_link(prev.next)
+                while prev.next:
+                    prev = prev.next
+                prev.next = tmp
+                curr = tmp
+            else:
+                curr = curr.next
+        return dummy_head.next
+```
+
+---
+
+
+
+### 1143-最长公共子序列
+
+给定两个字符串 `text1` 和 `text2`，返回这两个字符串的最长 **公共子序列** 的长度。如果不存在 **公共子序列** ，返回 `0` 。
+
+一个字符串的 **子序列** 是指这样一个新的字符串：它是由原字符串在不改变字符的相对顺序的情况下删除某些字符（也可以不删除任何字符）后组成的新字符串。
+
+- 例如，`"ace"` 是 `"abcde"` 的子序列，但 `"aec"` 不是 `"abcde"` 的子序列。
+
+两个字符串的 **公共子序列** 是这两个字符串所共同拥有的子序列。
+
+**思路**
+
+`dp[i][j] `表示 `text_1 [0:i]` 和 `text_2 [0:j]` 的最长公共子序列的长度。
+
+若该位置两者字符相同，则可以在原先的基础上+1，否则就是取两者各退一位中最大的那个。
+
+```python
+class Solution:
+    def longestCommonSubsequence(self, text1: str, text2: str) -> int:
+        n = len(text1)
+        m = len(text2)
+
+        dp = [[0]*(m+1) for _ in range(n+1)]
+        
+        for i in range(1, n+1):
+            for j in range(1, m+1):
+                if text1[i-1] == text2[j-1]:
+                    dp[i][j] = dp[i-1][j-1]+1
+                else:
+                    dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+
+        return dp[n][m]
+```
+
+---
+
+
+
+### 72-编辑距离
+
+给你两个单词 `word1` 和 `word2`， *请返回将 `word1` 转换成 `word2` 所使用的最少操作数* 。
+
+你可以对一个单词进行如下三种操作：
+
+- 插入一个字符
+- 删除一个字符
+- 替换一个字符
+
+**思路**
+
+`dp[i][j] `代表 word1 到 i 位置转换成 word2 到 j 位置需要最少步数
+
+所以，
+
+当 `word1[i] == word2[j]`，`dp[i][j] = dp[i-1][j-1]`；
+
+当 `word1[i] != word2[j]`，`dp[i][j] = min(dp[i-1][j-1], dp[i-1][j], dp[i][j-1]) + 1`
+
+其中，`dp[i-1][j-1] `表示替换操作，`dp[i-1][j] `表示删除操作，`dp[i][j-1] `表示插入操作。
+
+注意还需要考虑空字符的情况，因此会需要对第0行和第0列进行单独的处理。
+
+```python
+class Solution:
+    def minDistance(self, word1: str, word2: str) -> int:
+        n = len(word1)
+        m = len(word2)
+        dp = [[0]*(m+1) for _ in range(n+1)]
+
+        for i in range(1, n+1):
+            dp[i][0] = dp[i-1][0] + 1
+        
+        for j in range(1, m+1):
+            dp[0][j] = dp[0][j-1] + 1
+        
+        for i in range(1, n+1):
+            for j in range(1, m+1):
+                if word1[i-1] == word2[j-1]:
+                    dp[i][j] = dp[i-1][j-1]
+                else:
+                    dp[i][j] = min(dp[i-1][j], dp[i-1][j-1], dp[i][j-1])+1
+        
+        return dp[n][m]
+```
+
+---
+

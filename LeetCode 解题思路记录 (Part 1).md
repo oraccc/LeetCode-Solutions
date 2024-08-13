@@ -105,6 +105,77 @@ class Solution:
 
 
 
+### 4-寻找两个正序数组的中位数
+
+给定两个大小分别为 `m` 和 `n` 的正序（从小到大）数组 `nums1` 和 `nums2`。请你找出并返回这两个正序数组的 **中位数** 。
+
+算法的时间复杂度应该为 `O(log (m+n))` 。
+
+**思路**
+
+我们把数组 A 和数组 B 分别在 i 和 j 进行切割。
+
+将 i 的左边和 j 的左边组合成「左半部分」，将 i 的右边和 j 的右边组合成「右半部分」。
+
+为了保证 max ( A [ i - 1 ] , B [ j - 1 ]）） <= min ( A [ i ] , B [ j ]）），因为 A 数组和 B 数组是有序的，所以 A [ i - 1 ] <= A [ i ]，B [ i - 1 ] <= B [ i ] 这是天然的，所以我们只需要保证 B [ j - 1 ] < = A [ i ] 和 A [ i - 1 ] <= B [ j ] 所以我们分两种情况讨论：
+
+* B [ j - 1 ] > A [ i ]，并且为了不越界，要保证 j != 0，i != m
+  * 此时很明显，我们需要增加 i 
+
+- A [ i - 1 ] > B [ j ] ，并且为了不越界，要保证 i != 0，j != n
+  - 此时和上边的情况相反，我们要减少 i ，增大 j 。
+
+- 当 i = 0, 或者 j = 0，也就是切在了最前边。
+  - 此时左半部分当 j = 0 时，最大的值就是 A [ i - 1 ] ；当 i = 0 时 最大的值就是 B [ j - 1] 。右半部分最小值和之前一样。
+- 当 i = m 或者 j = n，也就是切在了最后边。
+  - 此时左半部分最大值和之前一样。右半部分当 j = n 时，最小值就是 A [ i ] ；当 i = m 时，最小值就是B [ j ] 。
+
+所有的思路都理清了，最后一个问题，增加 i 的方式。当然用二分了。初始化 i 为中间的值，然后减半找中间的，减半找中间的，减半找中间的直到答案。
+
+```python
+class Solution:
+    def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:
+        n = len(nums1)
+        m = len(nums2)
+        if n > m:
+            nums1, nums2 = nums2, nums1
+            n, m = m, n
+        
+        i_min = 0
+        i_max = n
+        while i_min <= i_max:
+            i = (i_min + i_max)//2
+            j = (m+n+1)//2 - i
+            if i != 0 and j != m and nums1[i-1] > nums2[j]:
+                i_max = i
+            elif j != 0 and i != n and nums2[j-1] > nums1[i]:
+                i_min = i+1
+            else:
+                if i == 0:
+                    left_max = nums2[j-1]
+                elif j == 0:
+                    left_max = nums1[i-1]
+                else:
+                    left_max = max(nums1[i-1], nums2[j-1])
+
+                if (m+n) % 2 == 1:
+                    return left_max
+
+                if i == n:
+                    right_min = nums2[j]
+                elif j == m:
+                    right_min = nums1[i]
+                else:
+                    right_min = min(nums1[i], nums2[j])
+                
+                return (left_max + right_min)/2
+        return 0
+```
+
+---
+
+
+
 ### 5-最长回文子串
 
 给你一个字符串 `s`，找到 `s` 中最长的 回文子串。
