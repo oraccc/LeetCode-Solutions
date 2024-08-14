@@ -1297,6 +1297,57 @@ class Solution:
 
 
 
+### 538-将二叉搜索树转换为累加树
+
+给出二叉 **搜索** 树的根节点，该树的节点值各不相同，请你将其转换为累加树（Greater Sum Tree），使每个节点 `node` 的新值等于原树中大于或等于 `node.val` 的值之和。
+
+提醒一下，二叉搜索树满足下列约束条件：
+
+- 节点的左子树仅包含键 **小于** 节点键的节点。
+- 节点的右子树仅包含键 **大于** 节点键的节点。
+- 左右子树也必须是二叉搜索树。
+
+**思路**
+
+逆向遍历二叉搜素树，并记录前序节点，当前节点的值就需要加上前序节点，因为前序节点一定比当前节点的值要大。
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def convertBST(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        if not root:
+            return None
+        
+        self.prev = None
+
+        def helper(node):
+            if not node:
+                return
+
+            helper(node.right)
+
+            if self.prev:
+                node.val += self.prev.val
+            self.prev = node
+
+            helper(node.left)
+
+        helper(root)
+
+        return root
+
+                
+```
+
+---
+
+
+
 ### 543-二叉树的直径
 
 给你一棵二叉树的根节点，返回该树的 **直径** 。
