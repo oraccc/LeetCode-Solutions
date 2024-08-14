@@ -1073,6 +1073,60 @@ class Solution:
 
 
 
+### 426-将二叉搜索树转化为排序的双向链表
+
+将一个 **二叉搜索树** 就地转化为一个 **已排序的双向循环链表** 。
+
+对于双向循环列表，你可以将左右孩子指针作为双向循环链表的前驱和后继指针，第一个节点的前驱是最后一个节点，最后一个节点的后继是第一个节点。
+
+特别地，我们希望可以 **就地** 完成转换操作。当转化完成以后，树中节点的左指针需要指向前驱，树中节点的右指针需要指向后继。还需要返回链表中最小元素的指针。
+
+**思路**
+
+类似于中序遍历这个二叉搜索树，需要一个前驱节点prev来记录当前节点的前面，这样便可以链接。如果一个节点没有前驱节点，那就是二叉搜索树的最左边的节点。每次遍历的时候都需要把当前节点变成前驱节点。遍历结束之后prev就在最右边的位置。
+
+注意最后还需要将prev和head两个点再串起来。
+
+```python
+"""
+# Definition for a Node.
+class Node:
+    def __init__(self, val, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+"""
+class Solution:
+    def treeToDoublyList(self, root: 'Node') -> 'Node':
+        if not root:
+            return None
+        self.prev = None
+
+        def helper(node):
+            if not node:
+                return
+            helper(node.left)
+            if self.prev:
+                self.prev.right = node
+                node.left = self.prev
+            else:
+                self.head = node
+            self.prev = node
+            helper(node.right)
+        
+        helper(root)
+
+        self.head.left = self.prev
+        self.prev.right = self.head
+
+        return self.head
+
+            
+        
+```
+
+---
+
 ### 437-路径总和III
 
 给定一个二叉树的根节点 `root` ，和一个整数 `targetSum` ，求该二叉树里节点值之和等于 `targetSum` 的 **路径** 的数目。
