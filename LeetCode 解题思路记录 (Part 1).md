@@ -642,6 +642,39 @@ class Solution:
 
 
 
+### 26-删除有序数组中的重复项
+
+给你一个 **非严格递增排列** 的数组 `nums` ，请你**[ 原地](http://baike.baidu.com/item/原地算法)** 删除重复出现的元素，使每个元素 **只出现一次** ，返回删除后数组的新长度。元素的 **相对顺序** 应该保持 **一致** 。然后返回 `nums` 中唯一元素的个数。
+
+考虑 `nums` 的唯一元素的数量为 `k` ，你需要做以下事情确保你的题解可以被通过：
+
+- 更改数组 `nums` ，使 `nums` 的前 `k` 个元素包含唯一元素，并按照它们最初在 `nums` 中出现的顺序排列。`nums` 的其余元素与 `nums` 的大小不重要。
+- 返回 `k` 。
+
+**思路**
+
+使用双指针，右指针正常的遍历数组，左指针左侧（包含自己）就是没有重复的数字。如果目前左右指针的值相同，那么左边不动，直到找到右边和左边不同了，将右边的值赋给左边（左边需要先向前移动一位），这样左边记录的也是最新的非重复的值。
+
+```python
+class Solution:
+    def removeDuplicates(self, nums: List[int]) -> int:
+        left = 0
+        right = 0
+        
+        while right < len(nums):
+            if nums[left] == nums[right]:
+                right += 1
+            else:
+                left += 1
+                nums[left] = nums[right]
+                right += 1
+        return left+1
+```
+
+---
+
+
+
 ### 27-移除元素
 
 给你一个数组 `nums` 和一个值 `val`，你需要 **[原地](https://baike.baidu.com/item/原地算法)** 移除所有数值等于 `val` 的元素。元素的顺序可能发生改变。然后返回 `nums` 中与 `val` 不同的元素的数量。
