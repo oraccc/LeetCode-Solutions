@@ -1969,6 +1969,44 @@ class Solution:
 
 
 
+### 110-平衡二叉树
+
+给定一个二叉树，判断它是否是 平衡二叉树
+
+ **思路**
+
+如果从上到下遍历的话，每个节点均会遍历多次，因此从下到上遍历。
+
+对于当前节点，先计算它左子树和右子树的深度，如果此时已经不平衡了，那么就返回-1，代表着子树已经不平衡了。或者如果此时左子树或者右子树的深度变成了-1，那么也是一个不平衡的子树。
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def isBalanced(self, root: Optional[TreeNode]) -> bool:
+
+        def helper(node):
+            if not node:
+                return 0
+            left_height = helper(node.left)
+            right_height = helper(node.right)
+
+            if abs(left_height-right_height) > 1 or left_height == -1 or right_height == -1:
+                return -1
+            else:
+                return 1+max(left_height, right_height)
+        
+        return helper(root) != -1
+```
+
+---
+
+
+
 ### 112-路径总和
 
 给你二叉树的根节点 `root` 和一个表示目标和的整数 `targetSum` 。判断该树中是否存在 **根节点到叶子节点** 的路径，这条路径上所有节点值相加等于目标和 `targetSum` 。如果存在，返回 `true` ；否则，返回 `false` 。

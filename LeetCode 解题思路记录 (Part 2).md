@@ -1581,6 +1581,46 @@ class Solution:
 
 
 
+### 1008-前序遍历构造二叉搜索树
+
+给定一个整数数组，它表示BST(即 **二叉搜索树** )的 先序遍历 ，构造树并返回其根。
+
+**保证** 对于给定的测试用例，总是有可能找到具有给定需求的二叉搜索树。
+
+**思路**
+
+对于前序遍历，第一个数就是他的根节点，接着对于BST来说，左子树的值全都小于右子树，因此只需要找到第一个大于根节点值的位置就是右子树开始的地方。
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def bstFromPreorder(self, preorder: List[int]) -> Optional[TreeNode]:
+
+        if not preorder:
+            return
+        n = len(preorder)
+        val = preorder[0]
+        root = TreeNode(val)
+        start = 1
+        while start < n:
+            if preorder[start] < val:
+                start += 1
+            else:
+                break
+        root.left = self.bstFromPreorder(preorder[1:start])
+        root.right = self.bstFromPreorder(preorder[start:])
+        return root
+```
+
+---
+
+
+
 ### 1143-最长公共子序列
 
 给定两个字符串 `text1` 和 `text2`，返回这两个字符串的最长 **公共子序列** 的长度。如果不存在 **公共子序列** ，返回 `0` 。
