@@ -642,6 +642,40 @@ class Solution:
 
 
 
+### 27-移除元素
+
+给你一个数组 `nums` 和一个值 `val`，你需要 **[原地](https://baike.baidu.com/item/原地算法)** 移除所有数值等于 `val` 的元素。元素的顺序可能发生改变。然后返回 `nums` 中与 `val` 不同的元素的数量。
+
+假设 `nums` 中不等于 `val` 的元素数量为 `k`，要通过此题，您需要执行以下操作：
+
+- 更改 `nums` 数组，使 `nums` 的前 `k` 个元素包含不等于 `val` 的元素。`nums` 的其余元素和 `nums` 的大小并不重要。
+- 返回 `k`。
+
+**思路**
+
+设置一个左右指针，一个是头一个是尾，我们需要确保从0开始到left之间（不包含left）都不是val，最后返回left即可。如果left目前的值是val，那么就和尾部的值交换，同时尾部往前移一位，但是注意此时left不可以动，很有可能left交换过来的值还是val。如果left此前不是val，向后移动left。直到两者交叉。
+
+注意结束条件是left>right的时候，此时才能返回。
+
+```python
+class Solution:
+    def removeElement(self, nums: List[int], val: int) -> int:
+        left = 0
+        right = len(nums)-1
+        while left <= right:
+            if nums[left] != val:
+                left += 1
+            else:
+                nums[left], nums[right] = nums[right], nums[left]
+                right -= 1
+        
+        return left
+```
+
+---
+
+
+
 ### 31-下一个排列
 
 整数数组的一个 **排列** 就是将其所有成员以序列或线性顺序排列。
