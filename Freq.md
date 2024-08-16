@@ -909,3 +909,86 @@ class Solution:
 
 ---
 
+
+
+### 43-字符串相乘
+
+给定两个以字符串形式表示的非负整数 `num1` 和 `num2`，返回 `num1` 和 `num2` 的乘积，它们的乘积也表示为字符串形式。
+
+**注意：**不能使用任何内置的 BigInteger 库或直接将输入转换为整数。
+
+**思路**
+
+我们可以从列竖式的角度取解决这个问题，首先需要一个辅助函数去计算单个数字与多位数的乘法结果，需要使用进位carry记住当前结果应该进的位数。接着将其转换成依次从左至右计算每个单位数和多位数的结果，注意每次结果要乘以10。
+
+```python
+class Solution:
+    def multiply(self, num1: str, num2: str) -> str:
+
+        def cal_single(nums, s):
+            result = 0
+            carry = 0
+            times = 0
+            s = int(s)
+            if s == 0:
+                return 0
+            for i in range(len(nums)-1, -1, -1):
+                digit = int(nums[i])
+                mul = (digit*s+carry) % 10
+                carry = (digit*s+carry) // 10
+                result += (10**times) * mul
+                times += 1
+            if carry:
+                result += (10**times) * carry
+
+            return result
+
+        ans = 0
+        for i in range(len(num2)):
+            ans = ans*10+cal_single(num1, num2[i])
+
+        return str(ans)
+```
+
+---
+
+
+
+### 32-最长有效括号
+
+给你一个只包含 `'('` 和 `')'` 的字符串，找出最长有效（格式正确且连续）括号子串的长度。
+
+**思路**
+
+我们始终保持栈底元素为当前已经遍历过的元素中「最后一个没有被匹配的右括号的下标」，这样的做法主要是考虑了边界条件的处理，栈里其他元素维护左括号的下标：
+
+* 对于遇到的每个 ‘(’ ，我们将它的下标放入栈中
+* 对于遇到的每个 ‘)’ ，我们先弹出栈顶元素表示匹配了当前右括号：
+  * 如果栈为空，说明当前的右括号为没有被匹配的右括号，我们将其下标放入栈中来更新我们之前提到的「最后一个没有被匹配的右括号的下标」
+  * 如果栈不为空，当前右括号的下标减去栈顶元素即为「以该右括号为结尾的最长有效括号的长度」
+    我们从前往后遍历字符串并更新答案即可。
+
+需要注意的是，如果一开始栈为空，第一个字符为左括号的时候我们会将其放入栈中，这样就不满足提及的「最后一个没有被匹配的右括号的下标」，为了保持统一，我们在一开始的时候往栈中放入一个值为 −1 的元素。
+
+
+
+```python
+class Solution:
+    def longestValidParentheses(self, s: str) -> int:
+        stack = [-1]
+        max_len = 0
+        for i in range(len(s)):
+            if s[i] == "(":
+                stack.append(i)
+            else:
+                stack.pop()
+                if not stack:
+                    stack.append(i)
+                else:
+                    max_len = max(max_len, i-stack[-1])
+        return max_len
+        
+```
+
+---
+

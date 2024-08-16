@@ -1019,6 +1019,49 @@ class Solution:
 
 
 
+### 43-字符串相乘
+
+给定两个以字符串形式表示的非负整数 `num1` 和 `num2`，返回 `num1` 和 `num2` 的乘积，它们的乘积也表示为字符串形式。
+
+**注意：**不能使用任何内置的 BigInteger 库或直接将输入转换为整数。
+
+**思路**
+
+我们可以从列竖式的角度取解决这个问题，首先需要一个辅助函数去计算单个数字与多位数的乘法结果，需要使用进位carry记住当前结果应该进的位数。接着将其转换成依次从左至右计算每个单位数和多位数的结果，注意每次结果要乘以10。
+
+```python
+class Solution:
+    def multiply(self, num1: str, num2: str) -> str:
+
+        def cal_single(nums, s):
+            result = 0
+            carry = 0
+            times = 0
+            s = int(s)
+            if s == 0:
+                return 0
+            for i in range(len(nums)-1, -1, -1):
+                digit = int(nums[i])
+                mul = (digit*s+carry) % 10
+                carry = (digit*s+carry) // 10
+                result += (10**times) * mul
+                times += 1
+            if carry:
+                result += (10**times) * carry
+
+            return result
+
+        ans = 0
+        for i in range(len(num2)):
+            ans = ans*10+cal_single(num1, num2[i])
+
+        return str(ans)
+```
+
+---
+
+
+
 ### 45-跳跃游戏II
 
 给定一个长度为 `n` 的 **0 索引**整数数组 `nums`。初始位置为 `nums[0]`。

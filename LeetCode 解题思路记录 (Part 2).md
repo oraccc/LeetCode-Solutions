@@ -1038,6 +1038,45 @@ class Solution:
 
 
 
+### 415-字符串相加
+
+给定两个字符串形式的非负整数 `num1` 和`num2` ，计算它们的和并同样以字符串形式返回。
+
+你不能使用任何內建的用于处理大整数的库（比如 `BigInteger`）， 也不能直接将输入的字符串转换为整数形式。
+
+**思路**
+
+把字符串倒过来处理
+
+```python
+class Solution:
+    def addStrings(self, num1: str, num2: str) -> str:
+        num1 = num1[::-1]
+        num2 = num2[::-1]
+
+        n = len(num1)
+        m = len(num2)
+
+        carry = 0
+        result = ""
+        i = 0
+        while i < max(n, m) or carry:
+            digit1 = int(num1[i]) if i < n else 0
+            digit2 = int(num2[i]) if i < m else 0
+            curr_sum = (digit1+digit2+carry) % 10
+            carry = (digit1+digit2+carry) // 10
+            result += str(curr_sum)
+            i += 1
+        
+        return result[::-1]
+        
+        
+```
+
+---
+
+
+
 ### 416-分割等和子集
 
 给你一个 **只包含正整数** 的 **非空** 数组 `nums` 。请你判断是否可以将这个数组分割成两个子集，使得两个子集的元素和相等。
