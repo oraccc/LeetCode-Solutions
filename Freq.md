@@ -489,7 +489,7 @@ class Solution:
 
 将 i 的左边和 j 的左边组合成「左半部分」，将 i 的右边和 j 的右边组合成「右半部分」。
 
-为了保证 max ( A [ i - 1 ] , B [ j - 1 ]）） <= min ( A [ i ] , B [ j ]）），因为 A 数组和 B 数组是有序的，所以 A [ i - 1 ] <= A [ i ]，B [ i - 1 ] <= B [ i ] 这是天然的，所以我们只需要保证 B [ j - 1 ] < = A [ i ] 和 A [ i - 1 ] <= B [ j ] 所以我们分两种情况讨论：
+为了保证 max ( A [ i - 1 ] , B [ j - 1 ]）） <= min ( A [ i ] , B [ j ]），因为 A 数组和 B 数组是有序的，所以 A [ i - 1 ] <= A [ i ]，B [ i - 1 ] <= B [ i ] 这是天然的，所以我们只需要保证 B [ j - 1 ] < = A [ i ] 和 A [ i - 1 ] <= B [ j ] 所以我们分两种情况讨论：
 
 * B [ j - 1 ] > A [ i ]，并且为了不越界，要保证 j != 0，i != m
   * 此时很明显，我们需要增加 i 
@@ -988,6 +988,105 @@ class Solution:
                     max_len = max(max_len, i-stack[-1])
         return max_len
         
+```
+
+---
+
+
+
+### 93-复原IP地址
+
+**有效 IP 地址** 正好由四个整数（每个整数位于 `0` 到 `255` 之间组成，且不能含有前导 `0`），整数之间用 `'.'` 分隔。
+
+- 例如：`"0.1.2.201"` 和` "192.168.1.1"` 是 **有效** IP 地址，但是 `"0.011.255.245"`、`"192.168.1.312"` 和 `"192.168@1.1"` 是 **无效** IP 地址。
+
+给定一个只包含数字的字符串 `s` ，用以表示一个 IP 地址，返回所有可能的**有效 IP 地址**，这些地址可以通过在 `s` 中插入 `'.'` 来形成。你 **不能** 重新排序或删除 `s` 中的任何数字。你可以按 **任何** 顺序返回答案。
+
+ **思路**
+
+使用回溯法，每次从start位置开始选择1-3个长度的字符，如果这个长度是合法的，那么就更新这个start位置。结束的条件便是现在已经有4个ip地址并且开始的start是字符串结尾，说明找到了一个满足条件的地址。
+
+```python
+class Solution:
+    def restoreIpAddresses(self, s: str) -> List[str]:
+
+        curr = []
+        ans = []
+        n = len(s)
+
+        def is_valid(start, end):
+            if end > n:
+                return False
+            if end-start >= 2 and s[start] == "0":
+                return False
+            if int(s[start:end]) > 255: 
+                return False
+            return True
+            
+
+        def backtracking(start):
+            if len(curr) == 4:
+                if start == n:
+                    ans.append(".".join(curr))
+                    return
+                else:
+                    return
+            
+            for i in range(1, 4):
+                if is_valid(start, start+i):
+                    curr.append(s[start:start+i])
+                    backtracking(start+i)
+                    curr.pop()
+
+        backtracking(0)
+
+        return ans
+        
+```
+
+---
+
+
+
+### 22-括号生成
+
+数字 `n` 代表生成括号的对数，请你设计一个函数，用于能够生成所有可能的并且 **有效的** 括号组合。
+
+**思路**
+
+每一步只有两个选择，要么添加左括号，要么添加右括号，每次进入回溯和结束回溯的状态要一致；由于要生成的是有效的，也就是右括号不能比左括号多，要额外多一个条件。
+
+```python
+class Solution:
+    def generateParenthesis(self, n: int) -> List[str]:
+        curr = []
+        ans = []
+        left = 0
+        right = 0
+
+        def backtracking():
+            nonlocal left
+            nonlocal right
+            if right > left:
+                return
+            if len(curr) == 2*n:
+                if left == right:
+                    ans.append("".join(curr))
+                return
+            curr.append("(")
+            left += 1
+            backtracking()
+            left -= 1
+            curr.pop()
+
+            curr.append(")")
+            right += 1
+            backtracking()
+            right -= 1
+            curr.pop()
+
+        backtracking()
+        return ans
 ```
 
 ---
