@@ -806,3 +806,106 @@ class Solution:
 
 ---
 
+
+
+### 54-螺旋矩阵
+
+给你一个 `m` 行 `n` 列的矩阵 `matrix` ，请按照 **顺时针螺旋顺序** ，返回矩阵中的所有元素。
+
+<img src="https://assets.leetcode.com/uploads/2020/11/13/spiral.jpg" style="zoom:67%;" />
+
+**思路**
+
+设置四个循环以及四个变量分别代表边界
+
+注意在逆向循环的时候，不要重复读取数字，可以考虑特殊情况，即只有一列或者只有一行的情况，就可以想出逆向情况下`if left < right and top < bottom`这个边界情况。
+
+```python
+class Solution:
+    def spiralOrder(self, matrix: List[List[int]]) -> List[int]:
+        top = 0
+        bottom = len(matrix)-1
+        left = 0
+        right = len(matrix[0])-1
+        ans = []
+        while left <= right and top <= bottom:
+            for i in range(left, right+1):
+                ans.append(matrix[top][i])
+            for i in range(top+1, bottom+1):
+                ans.append(matrix[i][right])
+            if left < right and top < bottom:
+                for i in range(right-1, left-1, -1):
+                    ans.append(matrix[bottom][i])
+                for i in range(bottom-1, top, -1):
+                    ans.append(matrix[i][left])
+            
+            left, right, top, bottom = left+1, right-1, top+1, bottom-1
+        return ans
+
+
+```
+
+---
+
+
+
+### 56-合并区间
+
+以数组 `intervals` 表示若干个区间的集合，其中单个区间为 `intervals[i] = [starti, endi]` 。请你合并所有重叠的区间，并返回 *一个不重叠的区间数组，该数组需恰好覆盖输入中的所有区间* 。
+
+**思路**
+
+首先对所有的区间进行排序，按照左边界从小到大进行排序。为什么是左边界，因为我们需要左边界来确定合并的范围
+
+接着选第一个的区间来决定左右边界，循环intervals，如果后面的区间与目前的有重叠，那么合并，否则就加入答案中。记得循环到最后还有区间没有加入答案。
+
+```python
+class Solution:
+    def merge(self, intervals: List[List[int]]) -> List[List[int]]:
+        intervals.sort(key=lambda x:x[0])
+        ans = []
+        left = intervals[0][0]
+        right = intervals[0][1]
+        for i in range(1, len(intervals)):
+            curr = intervals[i]
+            if curr[0] <= right:
+                right = max(right, curr[1])
+            else:
+                ans.append([left, right])
+                left = curr[0]
+                right = curr[1]
+        ans.append([left, right])
+        return ans
+```
+
+---
+
+
+
+### 121-买卖股票的最佳时机
+
+给定一个数组 `prices` ，它的第 `i` 个元素 `prices[i]` 表示一支给定股票第 `i` 天的价格。
+
+你只能选择 **某一天** 买入这只股票，并选择在 **未来的某一个不同的日子** 卖出该股票。设计一个算法来计算你所能获取的最大利润。
+
+返回你可以从这笔交易中获取的最大利润。如果你不能获取任何利润，返回 `0` 。
+
+**思路**
+
+因为只能买卖一次，因此这是一个贪心算法的问题。只需要在最低的时候买进，在之后某一天最高的之后卖出即可。遍历整个数组，如果当天价格是比目前持有的低，那就持有当天的，反之则看如果卖出可以卖多少。最后取最大值即可。
+
+```python
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        hold = prices[0]
+        max_profit = 0
+        for i in range(1, len(prices)):
+            if prices[i] < hold:
+                hold = prices[i]
+            else:
+                max_profit = max(max_profit, prices[i]-hold)
+        return max_profit
+```
+
+---
+
