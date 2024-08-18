@@ -1091,3 +1091,334 @@ class Solution:
 
 ---
 
+
+
+### 88-合并两个有序数组
+
+给你两个按 **非递减顺序** 排列的整数数组 `nums1` 和 `nums2`，另有两个整数 `m` 和 `n` ，分别表示 `nums1` 和 `nums2` 中的元素数目。
+
+请你 **合并** `nums2` 到 `nums1` 中，使合并后的数组同样按 **非递减顺序** 排列。
+
+**注意：**最终，合并后数组不应由函数返回，而是存储在数组 `nums1` 中。为了应对这种情况，`nums1` 的初始长度为 `m + n`，其中前 `m` 个元素表示应合并的元素，后 `n` 个元素为 `0` ，应忽略。`nums2` 的长度为 `n` 。
+
+**思路**
+
+倒着顺序进行遍历，将大的值放在nums1的末尾。当遍历结束时，观察nums2是否还没有遍历完，如果还没有遍历完，那么就说明这些数字全都比nums1里面的小，因此可以直接全部放在前面。
+
+```python
+class Solution:
+    def merge(self, nums1: List[int], m: int, nums2: List[int], n: int) -> None:
+        """
+        Do not return anything, modify nums1 in-place instead.
+        """
+        i = m-1
+        j = n-1
+        k = m+n-1
+        while i >= 0 and j >= 0:
+            if nums2[j] > nums1[i]:
+                nums1[k] = nums2[j]
+                j -= 1
+            else:
+                nums1[k] = nums1[i]
+                i -= 1
+            k -= 1
+        if j >= 0:
+            nums1[:j+1] = nums2[:j+1]
+```
+
+---
+
+
+
+### 160-相交链表
+
+给你两个单链表的头节点 `headA` 和 `headB` ，请你找出并返回两个单链表相交的起始节点。如果两个链表不存在相交节点，返回 `null` 。
+
+图示两个链表在节点 `c1` 开始相交：
+
+<img src="https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/12/14/160_statement.png" style="zoom:50%;" />
+
+题目数据 **保证** 整个链式结构中不存在环。
+
+**注意**，函数返回结果后，链表必须 **保持其原始结构** 。
+
+**思路**
+
+如果一个链表走完了，就从另一个链表的头开始走。若两个链表有相交的，则一定能相交。
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution:
+    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> Optional[ListNode]:
+        l1 = headA
+        l2 = headB
+        while l1 != l2:
+            l1 = l1.next if l1 else headB
+            l2 = l2.next if l2 else headA
+        
+        return l1
+
+```
+
+---
+
+
+
+### 142-环形链表-II
+
+给定一个链表的头节点  `head` ，返回链表开始入环的第一个节点。 *如果链表无环，则返回 `null`。*
+
+如果链表中有某个节点，可以通过连续跟踪 `next` 指针再次到达，则链表中存在环。 为了表示给定链表中的环，评测系统内部使用整数 `pos` 来表示链表尾连接到链表中的位置（**索引从 0 开始**）。如果 `pos` 是 `-1`，则在该链表中没有环。**注意：`pos` 不作为参数进行传递**，仅仅是为了标识链表的实际情况。
+
+**不允许修改** 链表。
+
+**思路**
+
+我们使用两个指针，fast 与 slow。它们起始都位于链表的头部。随后，slow 指针每次向后移动一个位置，而 fast 指针向后移动两个位置。如果链表中存在环，则 fast 指针最终将再次与 slow 指针在环中相遇。
+
+如下图所示，设链表中环外部分的长度为 a。slow 指针进入环后，又走了 b 的距离与 fast 相遇。此时，fast 指针已经走完了环的 n 圈，因此它走过的总距离为 a+n(b+c)+b=a+(n+1)b+nc。
+
+<img src="https://assets.leetcode-cn.com/solution-static/142/142_fig1.png" style="zoom: 25%;" />
+
+根据题意，任意时刻，fast 指针走过的距离都为 slow 指针的 2 倍。因此，我们有
+
+$$
+a+(n+1)b+nc=2(a+b)⟹a=c+(n−1)(b+c)
+$$
+有了 
+$$
+a=c+(n−1)(b+c)
+$$
+ 的等量关系，我们会发现：从相遇点到入环点的距离加上 n−1 圈的环长，恰好等于从链表头部到入环点的距离。
+
+因此，当发现 slow 与 fast 相遇时，我们再额外使用一个指针 ptr。起始，它指向链表头部；随后，它和 slow 每次向后移动一个位置。最终，它们会在入环点相遇。
+
+
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution:
+    def detectCycle(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        slow = fast = head
+        while True:
+            if not fast or not fast.next:
+                return None
+            fast = fast.next.next
+            slow = slow.next
+            if fast == slow:
+                break
+
+        fast = head
+        while fast != slow:
+            fast = fast.next
+            slow = slow.next
+        return fast
+        
+```
+
+---
+
+
+
+### 148-排序链表
+
+给你链表的头结点 `head` ，请将其按 **升序** 排列并返回 **排序后的链表** 。
+
+**思路**
+
+使用归并排序的思想。如果当前没有节点或者只有一个节点，直接返回即可。
+
+否则使用快慢指针将链表分成两个部分，然后分别对前半部分后面部分进行排序，对与排序好的结果，设置一个新的头部，然后就是合并两个链表的操作了。
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def sortList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        if not head or not head.next:
+            return head
+        slow = fast = head
+        while fast.next and fast.next.next:
+            slow = slow.next
+            fast = fast.next.next
+        half = slow.next
+        slow.next = None 
+        l = self.sortList(head)
+        r = self.sortList(half)
+
+        dummy_head = ListNode(-1)
+        curr = dummy_head
+        while l and r:
+            if l.val < r.val:
+                curr.next = l 
+                curr = curr.next
+                l = l.next
+            else:
+                curr.next = r
+                curr = curr.next
+                r = r.next
+        if l:
+            curr.next = l 
+        if r:
+            curr.next = r 
+        return dummy_head.next
+
+```
+
+---
+
+
+
+### 300-最长递增子序列
+
+给你一个整数数组 `nums` ，找到其中最长严格递增子序列的长度。
+
+**子序列** 是由数组派生而来的序列，删除（或不删除）数组中的元素而不改变其余元素的顺序。例如，`[3,6,2,7]` 是数组 `[0,3,1,6,2,2,7]` 的子序列。
+
+**思路**
+
+dp[i]代表以第i个元素结尾的最长递增子序列的长度。最后返回的是整个dp数组的最大值，因为LIS很可能不是以最后一个结尾的。
+
+```python
+class Solution:
+    def lengthOfLIS(self, nums: List[int]) -> int:
+        n = len(nums)
+        dp = [1]*n 
+        for i in range(1, n):
+            for j in range(i):
+                if nums[j] < nums[i]:
+                    dp[i] = max(dp[i], dp[j]+1)
+        
+        return max(dp)
+```
+
+---
+
+
+
+### 19-删除链表的倒数第N个结点
+
+给你一个链表，删除链表的倒数第 `n` 个结点，并且返回链表的头结点。
+
+**思路**
+
+设置快慢指针，让快慢指针实现差距n个位置。接着同时推进快慢指针，当快指针到链表结尾的时候，慢指针的下一个便是要删除的节点。
+
+注意可能要删除的节点便是头节点，因此需要设置一个dummy_head，快慢指针一开始都指向这个头节点前一个的指针。
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def removeNthFromEnd(self, head: Optional[ListNode], n: int) -> Optional[ListNode]:
+        dummy_head = ListNode()
+        dummy_head.next = head
+        slow = fast = dummy_head
+        
+        for i in range(n):
+            fast = fast.next
+        while fast.next:
+            slow = slow.next
+            fast = fast.next
+        slow.next = slow.next.next
+        return dummy_head.next
+```
+
+---
+
+
+
+### 33-搜索旋转排序数组
+
+整数数组 `nums` 按升序排列，数组中的值 **互不相同** 。
+
+在传递给函数之前，`nums` 在预先未知的某个下标 `k`（`0 <= k < nums.length`）上进行了 **旋转**，使数组变为 `[nums[k], nums[k+1], ..., nums[n-1], nums[0], nums[1], ..., nums[k-1]]`（下标 **从 0 开始** 计数）。例如， `[0,1,2,4,5,6,7]` 在下标 `3` 处经旋转后可能变为 `[4,5,6,7,0,1,2]` 。
+
+给你 **旋转后** 的数组 `nums` 和一个整数 `target` ，如果 `nums` 中存在这个目标值 `target` ，则返回它的下标，否则返回 `-1` 。
+
+你必须设计一个时间复杂度为 `O(log n)` 的算法解决此问题。
+
+**思路**
+
+本体采用二分搜索法可以解决。注意我们找到中间的位置mid之后，应该进行分类讨论，找到严格递增的是左边还是右边。因为二分搜索只有在递增的序列中生效。判断的条件也很简单，`nums[mid] < nums[right]`。如果target在严格递增的范围内（注意不仅要和mid比，也需要和left或者right比），那么可以照常移动指针，反之反方向移动就可以了。
+
+```python
+class Solution:
+    def search(self, nums: List[int], target: int) -> int:
+        left = 0
+        right = len(nums)-1
+        while left < right:
+            mid = (left+right)//2
+            if nums[mid] == target:
+                return mid
+            if nums[mid] < nums[right]:
+                if nums[mid] < target and nums[right] >= target:
+                    left = mid+1
+                else:
+                    right = mid
+            else:
+                if nums[mid] > target and nums[left] <= target:
+                    right = mid
+                else:
+                    left = mid+1
+        
+        if nums[left] == target:
+            return left
+        else:
+            return -1
+
+```
+
+---
+
+
+
+### 69 x的平方根
+
+给你一个非负整数 `x` ，计算并返回 `x` 的 **算术平方根** 。
+
+由于返回类型是整数，结果只保留 **整数部分** ，小数部分将被 **舍去 。**
+
+**注意：**不允许使用任何内置指数函数和算符，例如 `pow(x, 0.5)` 或者 `x ** 0.5` 。
+
+**思路**
+
+这题的思路比较直观，但是会有一个边界条件的判断比较难处理。在这里我们考虑二分的位置要取在靠左的位置，并且为了防止无限循环，我们只需要动left的指针就可以了，但是这样计算的结果会比正确结果大1，因此需要返回l-1。
+
+```python
+class Solution:
+    def mySqrt(self, x: int) -> int:
+        if x <= 1:
+            return x
+        l = 1
+        r = x
+
+        while l < r:
+            mid = (l+r) // 2
+            if mid * mid == x:
+                return mid
+            if mid * mid < x:
+                l = mid+1
+            else:
+                r = mid
+        return l-1
+```
+
+---
+

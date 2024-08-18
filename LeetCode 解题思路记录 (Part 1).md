@@ -1508,6 +1508,41 @@ class Solution:
 
 
 
+### 69 x的平方根
+
+给你一个非负整数 `x` ，计算并返回 `x` 的 **算术平方根** 。
+
+由于返回类型是整数，结果只保留 **整数部分** ，小数部分将被 **舍去 。**
+
+**注意：**不允许使用任何内置指数函数和算符，例如 `pow(x, 0.5)` 或者 `x ** 0.5` 。
+
+**思路**
+
+这题的思路比较直观，但是会有一个边界条件的判断比较难处理。在这里我们考虑二分的位置要取在靠左的位置，并且为了防止无限循环，我们只需要动left的指针就可以了，但是这样计算的结果会比正确结果大1，因此需要返回l-1。
+
+```python
+class Solution:
+    def mySqrt(self, x: int) -> int:
+        if x <= 1:
+            return x
+        l = 1
+        r = x
+
+        while l < r:
+            mid = (l+r) // 2
+            if mid * mid == x:
+                return mid
+            if mid * mid < x:
+                l = mid+1
+            else:
+                r = mid
+        return l-1
+```
+
+---
+
+
+
 ### 70-爬楼梯
 
 假设你正在爬楼梯。需要 `n` 阶你才能到达楼顶。
@@ -1832,6 +1867,43 @@ class Solution:
                     backtracking(i, j, 0)
         
         return found
+```
+
+---
+
+
+
+### 88-合并两个有序数组
+
+给你两个按 **非递减顺序** 排列的整数数组 `nums1` 和 `nums2`，另有两个整数 `m` 和 `n` ，分别表示 `nums1` 和 `nums2` 中的元素数目。
+
+请你 **合并** `nums2` 到 `nums1` 中，使合并后的数组同样按 **非递减顺序** 排列。
+
+**注意：**最终，合并后数组不应由函数返回，而是存储在数组 `nums1` 中。为了应对这种情况，`nums1` 的初始长度为 `m + n`，其中前 `m` 个元素表示应合并的元素，后 `n` 个元素为 `0` ，应忽略。`nums2` 的长度为 `n` 。
+
+**思路**
+
+倒着顺序进行遍历，将大的值放在nums1的末尾。当遍历结束时，观察nums2是否还没有遍历完，如果还没有遍历完，那么就说明这些数字全都比nums1里面的小，因此可以直接全部放在前面。
+
+```python
+class Solution:
+    def merge(self, nums1: List[int], m: int, nums2: List[int], n: int) -> None:
+        """
+        Do not return anything, modify nums1 in-place instead.
+        """
+        i = m-1
+        j = n-1
+        k = m+n-1
+        while i >= 0 and j >= 0:
+            if nums2[j] > nums1[i]:
+                nums1[k] = nums2[j]
+                j -= 1
+            else:
+                nums1[k] = nums1[i]
+                i -= 1
+            k -= 1
+        if j >= 0:
+            nums1[:j+1] = nums2[:j+1]
 ```
 
 ---
