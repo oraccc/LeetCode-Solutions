@@ -1910,6 +1910,61 @@ class Solution:
 
 
 
+### 92-反转链表II
+
+给你单链表的头指针 `head` 和两个整数 `left` 和 `right` ，其中 `left <= right` 。请你反转从位置 `left` 到位置 `right` 的链表节点，返回 **反转后的链表** 。
+
+ **思路**
+
+在反转之前提前记录前后的位置即可。
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def reverseBetween(self, head: Optional[ListNode], left: int, right: int) -> Optional[ListNode]:
+
+        def reverse_link(node):
+            prev = None
+            curr = node
+            while curr:
+                tmp = curr.next
+                curr.next = prev
+                prev = curr
+                curr = tmp
+            return prev
+
+        dummy_head = ListNode(-1)
+        prev = dummy_head
+        dummy_head.next = head
+
+        for i in range(left-1):
+            prev = prev.next
+        
+        curr = prev
+        for i in range(right-left+1):
+            curr = curr.next 
+
+        tail = curr.next
+        curr.next = None
+
+
+        prev.next = reverse_link(prev.next)
+
+        while prev.next:
+            prev = prev.next
+        prev.next = tail
+
+        return dummy_head.next
+```
+
+---
+
+
+
 ### 93-复原IP地址
 
 **有效 IP 地址** 正好由四个整数（每个整数位于 `0` 到 `255` 之间组成，且不能含有前导 `0`），整数之间用 `'.'` 分隔。
