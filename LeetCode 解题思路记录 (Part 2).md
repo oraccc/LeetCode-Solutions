@@ -949,6 +949,51 @@ class Solution:
 
 
 
+### 328-奇偶链表
+
+给定单链表的头节点 `head` ，将所有索引为奇数的节点和索引为偶数的节点分别组合在一起，然后返回重新排序的列表。
+
+**第一个**节点的索引被认为是 **奇数** ， **第二个**节点的索引为 **偶数** ，以此类推。
+
+请注意，偶数组和奇数组内部的相对顺序应该与输入时保持一致。
+
+你必须在 `O(1)` 的额外空间复杂度和 `O(n)` 的时间复杂度下解决这个问题。
+
+ **思路**
+
+分别设置奇偶链表的头， 对于每一个偶节点，可以将它之后的奇数节点放到前面，然后更改链表的指向。有图会更加清晰。最后将奇偶链表头尾相连即可。
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def oddEvenList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        if not head:
+            return None
+        odd_head = odd = head
+        even_head = even = head.next
+
+        while even and even.next:
+            odd.next = even.next
+            even.next = even.next.next
+            odd.next.next = even
+
+            odd = odd.next
+            even = even.next
+        
+        odd.next = even_head
+        return odd_head
+
+
+```
+
+---
+
+
+
 ### 347-前K个高频元素
 
 给你一个整数数组 `nums` 和一个整数 `k` ，请你返回其中出现频率前 `k` 高的元素。你可以按 **任意顺序** 返回答案。
