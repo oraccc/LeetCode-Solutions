@@ -740,6 +740,43 @@ class Solution:
 
 
 
+### 239-滑动窗口最大值
+
+给你一个整数数组 `nums`，有一个大小为 `k` 的滑动窗口从数组的最左侧移动到数组的最右侧。你只可以看到在滑动窗口内的 `k` 个数字。滑动窗口每次只向右移动一位。
+
+返回 *滑动窗口中的最大值* 。
+
+ **思路**
+
+使用一个双端队列。队列中仅需要维持当前窗口的最大值即可。入队的时候，需要将所有小于当前要入队的值的元素全部去掉。因为考虑到可能有重复的元素，因此判断范围是小于而不是小于等于。当然还要考虑从滑动窗口移动的时候，我们要判断现在最大的值是不是刚好需要去掉的值（nums[i-k]），如果是的话就要从前端去掉这一个值。
+
+```python
+class Solution:
+    def maxSlidingWindow(self, nums: List[int], k: int) -> List[int]:
+        deque = []
+        n = len(nums)
+        ans = []
+        for i in range(n):
+            if i < k:
+                while deque and deque[-1] < nums[i]:
+                    deque.pop()
+                deque.append(nums[i])
+                if i == k-1:
+                    ans.append(deque[0])
+            else:
+                if deque and deque[0] == nums[i-k]:
+                    deque.pop(0)
+                while deque and deque[-1] < nums[i]:
+                    deque.pop()
+                deque.append(nums[i])
+                ans.append(deque[0])
+        return ans
+```
+
+---
+
+
+
 ### 240-搜索二维矩阵II
 
 编写一个高效的算法来搜索 `*m* x *n*` 矩阵 `matrix` 中的一个目标值 `target` 。该矩阵具有以下特性：
