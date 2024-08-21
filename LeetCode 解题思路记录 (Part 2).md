@@ -519,6 +519,144 @@ class Solution:
 
 
 
+### 208-实现Trie（前缀树）
+
+Trie（发音类似 "try"）或者说 **前缀树** 是一种树形数据结构，用于高效地存储和检索字符串数据集中的键。这一数据结构有相当多的应用情景，例如自动补全和拼写检查。
+
+请你实现 Trie 类：
+
+- `Trie()` 初始化前缀树对象。
+- `void insert(String word)` 向前缀树中插入字符串 `word` 。
+- `boolean search(String word)` 如果字符串 `word` 在前缀树中，返回 `true`（即，在检索之前已经插入）；否则，返回 `false` 。
+- `boolean startsWith(String prefix)` 如果之前已经插入的字符串 `word` 的前缀之一为 `prefix` ，返回 `true` ；否则，返回 `false` 。
+
+**思路**
+
+为了实现一棵前缀树，我们需要一个树节点的定义，因此我们自己设定一个类叫做TrieNode，然后TrieNode本身的子节点是26个字母的TrieNode，同时也需要is_word这个flag标准这是不是词语的终点，用于search函数使用。在判断是否是单词的时候，需要递归这个单词。
+
+```python
+class TrieNode:
+    def __init__(self, is_word=False):
+        self.is_word = False
+        self.children = [None for _ in range(26)]
+
+class Trie:
+
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, word: str) -> None:
+        curr = self.root
+        for c in word:
+            pos = ord(c)-ord("a")
+            if not curr.children[pos]:
+                curr.children[pos] = TrieNode()
+            curr = curr.children[pos]
+        curr.is_word = True
+
+    def search(self, word: str) -> bool:
+        curr = self.root
+        for c in word:
+            pos = ord(c)-ord("a")
+            if not curr.children[pos]:
+                return False
+            curr = curr.children[pos]
+        return curr.is_word
+
+    def startsWith(self, prefix: str) -> bool:
+        curr = self.root
+        for c in prefix:
+            pos = ord(c)-ord("a")
+            if not curr.children[pos]:
+                return False
+            curr = curr.children[pos]
+        return True
+
+
+
+# Your Trie object will be instantiated and called as such:
+# obj = Trie()
+# obj.insert(word)
+# param_2 = obj.search(word)
+# param_3 = obj.startsWith(prefix)
+```
+
+---
+
+
+
+### 212-单词搜索II
+
+给定一个 `m x n` 二维字符网格 `board` 和一个单词（字符串）列表 `words`， *返回所有二维网格上的单词* 。
+
+单词必须按照字母顺序，通过 **相邻的单元格** 内的字母构成，其中“相邻”单元格是那些水平相邻或垂直相邻的单元格。同一个单元格内的字母在一个单词中不允许被重复使用。
+
+**思路**
+
+此题因为需要匹配的目标有多个单词，因此我们可以使用前缀树去进行一个记录这些单词。这里的前缀树可以稍微修改一下，树的节点可以多一个属性word，记录以当前节点结尾的单词是什么。在dfs的时候，需要传入当前的树节点。如果该树节点的下一个单词节点是None，那么就说明现在没有任何匹配的，也就可以直接返回了。如果当前下一个树节点的word不是空的，说明找到了完整的单词，因此可以返回了。最后注意用set去重。
+
+```python
+class TrieNode:
+    def __init__(self):
+        self.children = [None]*26
+        self.word = ""
+
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+    
+    def insert(self, word):
+        curr = self.root
+        for c in word:
+            pos = ord(c)-ord('a')
+            if not curr.children[pos]:
+                curr.children[pos] = TrieNode()
+            curr = curr.children[pos]
+        curr.word = word
+
+
+class Solution:
+    def findWords(self, board: List[List[str]], words: List[str]) -> List[str]:
+        trie = Trie()
+        for word in words:
+            trie.insert(word)
+        
+        ans = []
+        n = len(board)
+        m = len(board[0])
+        direction = [-1, 0, 1, 0, -1]
+        visited = [[False]*m for _ in range(n)]
+
+        def backtracking(curr, i, j):
+            char = board[i][j]
+            curr = curr.children[ord(char)-ord('a')]
+
+            if not curr:
+                return
+            if curr.word != "":
+                ans.append(curr.word)
+            visited[i][j] = True
+            for k in range(4):
+                row = i + direction[k]
+                col = j + direction[k+1]
+                if row >= 0 and row < n and col >= 0 and col < m and not visited[row][col]:
+                    backtracking(curr, row, col)
+            visited[i][j] = False
+
+
+        for i in range(n):
+            for j in range(m):
+                backtracking(trie.root, i, j)
+        
+        return list(set(ans))
+        
+```
+
+---
+
+
+
 ### 215-数组中的第k个最大的元素
 
 给定整数数组 `nums` 和整数 `k`，请返回数组中第 `k` 个最大的元素。
