@@ -1459,3 +1459,189 @@ class Solution:
 
 ---
 
+
+
+### 212-单词搜索II
+
+给定一个 `m x n` 二维字符网格 `board` 和一个单词（字符串）列表 `words`， *返回所有二维网格上的单词* 。
+
+单词必须按照字母顺序，通过 **相邻的单元格** 内的字母构成，其中“相邻”单元格是那些水平相邻或垂直相邻的单元格。同一个单元格内的字母在一个单词中不允许被重复使用。
+
+**思路**
+
+此题因为需要匹配的目标有多个单词，因此我们可以使用前缀树去进行一个记录这些单词。这里的前缀树可以稍微修改一下，树的节点可以多一个属性word，记录以当前节点结尾的单词是什么。在dfs的时候，需要传入当前的树节点。如果该树节点的下一个单词节点是None，那么就说明现在没有任何匹配的，也就可以直接返回了。如果当前下一个树节点的word不是空的，说明找到了完整的单词，因此可以返回了。最后注意用set去重。
+
+```python
+class TrieNode:
+    def __init__(self):
+        self.children = [None]*26
+        self.word = ""
+
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+    
+    def insert(self, word):
+        curr = self.root
+        for c in word:
+            pos = ord(c)-ord('a')
+            if not curr.children[pos]:
+                curr.children[pos] = TrieNode()
+            curr = curr.children[pos]
+        curr.word = word
+
+
+class Solution:
+    def findWords(self, board: List[List[str]], words: List[str]) -> List[str]:
+        trie = Trie()
+        for word in words:
+            trie.insert(word)
+        
+        ans = []
+        n = len(board)
+        m = len(board[0])
+        direction = [-1, 0, 1, 0, -1]
+        visited = [[False]*m for _ in range(n)]
+
+        def backtracking(curr, i, j):
+            char = board[i][j]
+            curr = curr.children[ord(char)-ord('a')]
+
+            if not curr:
+                return
+            if curr.word != "":
+                ans.append(curr.word)
+            visited[i][j] = True
+            for k in range(4):
+                row = i + direction[k]
+                col = j + direction[k+1]
+                if row >= 0 and row < n and col >= 0 and col < m and not visited[row][col]:
+                    backtracking(curr, row, col)
+            visited[i][j] = False
+
+
+        for i in range(n):
+            for j in range(m):
+                backtracking(trie.root, i, j)
+        
+        return list(set(ans))
+        
+```
+
+---
+
+
+
+### 39-组合总和
+
+给你一个 **无重复元素** 的整数数组 `candidates` 和一个目标整数 `target` ，找出 `candidates` 中可以使数字和为目标数 `target` 的 所有 **不同组合** ，并以列表形式返回。你可以按 **任意顺序** 返回这些组合。
+
+`candidates` 中的 **同一个** 数字可以 **无限制重复被选取** 。如果至少一个数字的被选数量不同，则两种组合是不同的。 
+
+对于给定的输入，保证和为 `target` 的不同组合数少于 `150` 个。
+
+ **思路**
+
+使用回溯算法，每次循环的时候范围取当前位置到最后一个位置。注意当前位置不是必须得取的，因此不要在循环的外面append和pop，不然的话答案一定会包含当前位置的数，不符合题意。
+
+```python
+class Solution:
+    def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
+        n = len(candidates)
+        curr = []
+        ans = []
+        def backtracking(pos):
+            if sum(curr) > target:
+                return
+            if sum(curr) == target:
+                ans.append(curr[:])
+            
+            for i in range(pos, n):
+                curr.append(candidates[i])
+                backtracking(i)
+                curr.pop()
+
+        backtracking(0)
+        return ans
+```
+
+---
+
+
+
+### 322-零钱兑换
+
+给你一个整数数组 `coins` ，表示不同面额的硬币；以及一个整数 `amount` ，表示总金额。
+
+计算并返回可以凑成总金额所需的 **最少的硬币个数** 。如果没有任何一种硬币组合能组成总金额，返回 `-1` 。
+
+你可以认为每种硬币的数量是无限的。
+
+**思路**
+
+该题的思路也是动态规划，可以参考“279-完全平方数”的写法。注意有可能不能凑成总金额。
+
+```python
+class Solution:
+    def coinChange(self, coins: List[int], amount: int) -> int:
+        dp = [amount+1] * (amount+1)
+        dp[0] = 0
+        for i in range(1, amount+1):
+            for coin in coins:
+                if coin <= i:
+                    dp[i] = min(dp[i], dp[i-coin]+1)
+        if dp[amount] == amount+1:
+            return -1
+        return dp[amount]
+```
+
+---
+
+
+
+### 662-二叉树最大宽度
+
+给你一棵二叉树的根节点 `root` ，返回树的 **最大宽度** 。
+
+树的 **最大宽度** 是所有层中最大的 **宽度** 。
+
+每一层的 **宽度** 被定义为该层最左和最右的非空节点（即，两个端点）之间的长度。将这个二叉树视作与满二叉树结构相同，两端点间会出现一些延伸到这一层的 `null` 节点，这些 `null` 节点也计入长度。
+
+题目数据保证答案将会在 **32 位** 带符号整数范围内。
+
+**思路**
+
+当层序遍历的时候，也放入当前节点在这一层的编号，若上一层的编号为i，那么这一层左节点编号是`2*i`，右节点编号是`2*i+1`，计算最大宽度的时候最左边和最右边的编号相减即可。
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def widthOfBinaryTree(self, root: Optional[TreeNode]) -> int:
+        max_width = 1
+        if not root:
+            return 0
+        queue = [(root, 0)]
+
+        while queue:
+            n = len(queue)
+            for _ in range(n):
+                node, idx = queue.pop(0)
+                if node.left:
+                    queue.append((node.left, 2*idx))
+                if node.right:
+                    queue.append((node.right, 2*idx+1))
+            
+            if queue:
+                max_width = max(max_width, queue[-1][1]-queue[0][1]+1)
+
+        return max_width
+```
+
+---
+

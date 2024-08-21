@@ -1445,6 +1445,55 @@ class Solution:
 
 
 
+### 59-螺旋矩阵II
+
+给你一个正整数 `n` ，生成一个包含 `1` 到 `n2` 所有元素，且元素按顺时针顺序螺旋排列的 `n x n` 正方形矩阵 `matrix` 。
+
+ **思路**
+
+和54题一致
+
+```python
+class Solution:
+    def generateMatrix(self, n: int) -> List[List[int]]:
+        matrix = [[0]*n for _ in range(n)]
+        count = 1
+
+        top = 0
+        bottom = n-1
+        left = 0
+        right = n-1
+
+        while top <= bottom and left <= right:
+            for i in range(left, right+1):
+                matrix[top][i] = count
+                count += 1
+            for i in range(top+1, bottom+1):
+                matrix[i][right] = count
+                count += 1
+            
+            if top < bottom and left < right:
+                for i in range(right-1, left-1, -1):
+                    matrix[bottom][i] = count
+                    count += 1
+                for i in range(bottom-1, top, -1):
+                    matrix[i][left] = count
+                    count += 1
+
+            top += 1
+            bottom -= 1
+            left += 1
+            right -= 1
+
+        return matrix
+        
+
+```
+
+---
+
+
+
 ### 62-不同路径
 
 一个机器人位于一个 `m x n` 网格的左上角 （起始点在下图中标记为 “Start” ）。

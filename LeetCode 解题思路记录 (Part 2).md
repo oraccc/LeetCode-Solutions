@@ -1716,6 +1716,53 @@ class Solution:
 
 
 
+### 662-二叉树最大宽度
+
+给你一棵二叉树的根节点 `root` ，返回树的 **最大宽度** 。
+
+树的 **最大宽度** 是所有层中最大的 **宽度** 。
+
+每一层的 **宽度** 被定义为该层最左和最右的非空节点（即，两个端点）之间的长度。将这个二叉树视作与满二叉树结构相同，两端点间会出现一些延伸到这一层的 `null` 节点，这些 `null` 节点也计入长度。
+
+题目数据保证答案将会在 **32 位** 带符号整数范围内。
+
+**思路**
+
+当层序遍历的时候，也放入当前节点在这一层的编号，若上一层的编号为i，那么这一层左节点编号是`2*i`，右节点编号是`2*i+1`，计算最大宽度的时候最左边和最右边的编号相减即可。
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def widthOfBinaryTree(self, root: Optional[TreeNode]) -> int:
+        max_width = 1
+        if not root:
+            return 0
+        queue = [(root, 0)]
+
+        while queue:
+            n = len(queue)
+            for _ in range(n):
+                node, idx = queue.pop(0)
+                if node.left:
+                    queue.append((node.left, 2*idx))
+                if node.right:
+                    queue.append((node.right, 2*idx+1))
+            
+            if queue:
+                max_width = max(max_width, queue[-1][1]-queue[0][1]+1)
+
+        return max_width
+```
+
+---
+
+
+
 ### 739-每日温度
 
 给定一个整数数组 `temperatures` ，表示每天的温度，返回一个数组 `answer` ，其中 `answer[i]` 是指对于第 `i` 天，下一个更高温度出现在几天后。如果气温在这之后都不会升高，请在该位置用 `0` 来代替。
