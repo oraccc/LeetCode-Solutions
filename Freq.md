@@ -1645,3 +1645,151 @@ class Solution:
 
 ---
 
+
+
+### 426-将二叉搜索树转化为排序的双向链表
+
+将一个 **二叉搜索树** 就地转化为一个 **已排序的双向循环链表** 。
+
+对于双向循环列表，你可以将左右孩子指针作为双向循环链表的前驱和后继指针，第一个节点的前驱是最后一个节点，最后一个节点的后继是第一个节点。
+
+特别地，我们希望可以 **就地** 完成转换操作。当转化完成以后，树中节点的左指针需要指向前驱，树中节点的右指针需要指向后继。还需要返回链表中最小元素的指针。
+
+**思路**
+
+类似于中序遍历这个二叉搜索树，需要一个前驱节点prev来记录当前节点的前面，这样便可以链接。如果一个节点没有前驱节点，那就是二叉搜索树的最左边的节点。每次遍历的时候都需要把当前节点变成前驱节点。遍历结束之后prev就在最右边的位置。
+
+注意最后还需要将prev和head两个点再串起来。
+
+```python
+"""
+# Definition for a Node.
+class Node:
+    def __init__(self, val, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+"""
+class Solution:
+    def treeToDoublyList(self, root: 'Node') -> 'Node':
+        if not root:
+            return None
+        self.prev = None
+
+        def helper(node):
+            if not node:
+                return
+            helper(node.left)
+            if self.prev:
+                self.prev.right = node
+                node.left = self.prev
+            else:
+                self.head = node
+            self.prev = node
+            helper(node.right)
+        
+        helper(root)
+
+        self.head.left = self.prev
+        self.prev.right = self.head
+
+        return self.head
+
+            
+        
+```
+
+---
+
+### 
+
+### 695-岛屿的最大面积
+
+给你一个大小为 `m x n` 的二进制矩阵 `grid` 。
+
+**岛屿** 是由一些相邻的 `1` (代表土地) 构成的组合，这里的「相邻」要求两个 `1` 必须在 **水平或者竖直的四个方向上** 相邻。你可以假设 `grid` 的四个边缘都被 `0`（代表水）包围着。
+
+岛屿的面积是岛上值为 `1` 的单元格的数目。
+
+计算并返回 `grid` 中最大的岛屿面积。如果没有岛屿，则返回面积为 `0` 。
+
+**思路**
+
+与第200题的思路一致，只是dfs返回的时候返回的是当前岛屿的面积。
+
+```python
+class Solution:
+    def maxAreaOfIsland(self, grid: List[List[int]]) -> int:
+        max_area = 0
+        direction = [-1, 0, 1, 0, -1]
+        n = len(grid)
+        m = len(grid[0])
+
+        def dfs_helper(i, j):
+            if grid[i][j] == 0:
+                return 0
+            grid[i][j] = 0
+            count = 1
+            for k in range(4):
+                row = i+direction[k]
+                col = j+direction[k+1]
+                if row >= 0 and row < n and col >= 0 and col < m:
+                    count += dfs_helper(row, col)
+            return count
+        
+        for i in range(n):
+            for j in range(m):
+                if grid[i][j]:
+                    area = dfs_helper(i, j)
+                    max_area = max(area, max_area)
+        
+        return max_area
+            
+```
+
+---
+
+
+
+### 543-二叉树的直径
+
+给你一棵二叉树的根节点，返回该树的 **直径** 。
+
+二叉树的 **直径** 是指树中任意两个节点之间最长路径的 **长度** 。这条路径可能经过也可能不经过根节点 `root` 。
+
+两节点之间路径的 **长度** 由它们之间边数表示。
+
+**思路**
+
+本质上时记录**左右子树深度之和的最大值**。helper函数就是用来求当前根节点的最大深度。
+
+由于最长的路径不一定会经过当前的root节点，因此递归函数返回的值不一定就是最长路径。因此需要设置一个全局的变量来记录这一个值。而递归函数只是返回以root节点为路径的一个边的最长路径，即`1+max(left_max, right_max)`，（因为左边的路径到root距离要再加一个，右边也是）。然而实际判断最长路径的操作实在每次递归结束后，判断当前左路径加上右路径是否是最长的。
+
+注意nonlocal修饰符，`nonlocal diameter` 声明告诉 Python，`diameter` 变量不是 `helper` 函数的局部变量，而是外层 `diameterOfBinaryTree` 函数的局部变量。这样，`helper` 函数就可以正确地修改 `diameter` 变量的值了。
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def diameterOfBinaryTree(self, root: Optional[TreeNode]) -> int:
+        diameter = 0
+
+        def helper(node):
+            nonlocal diameter
+            if not node:
+                return 0
+            left_max = helper(node.left)
+            right_max = helper(node.right)
+            diameter = max(diameter, left_max+right_max)
+            return 1+max(left_max, right_max)
+        
+        helper(root)
+        return diameter
+```
+
+---
+

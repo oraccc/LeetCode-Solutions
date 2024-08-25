@@ -1386,6 +1386,8 @@ class Solution:
 
 ---
 
+
+
 ### 437-路径总和III
 
 给定一个二叉树的根节点 `root` ，和一个整数 `targetSum` ，求该二叉树里节点值之和等于 `targetSum` 的 **路径** 的数目。
@@ -1757,6 +1759,54 @@ class Solution:
                 max_width = max(max_width, queue[-1][1]-queue[0][1]+1)
 
         return max_width
+```
+
+---
+
+
+
+### 695-岛屿的最大面积
+
+给你一个大小为 `m x n` 的二进制矩阵 `grid` 。
+
+**岛屿** 是由一些相邻的 `1` (代表土地) 构成的组合，这里的「相邻」要求两个 `1` 必须在 **水平或者竖直的四个方向上** 相邻。你可以假设 `grid` 的四个边缘都被 `0`（代表水）包围着。
+
+岛屿的面积是岛上值为 `1` 的单元格的数目。
+
+计算并返回 `grid` 中最大的岛屿面积。如果没有岛屿，则返回面积为 `0` 。
+
+**思路**
+
+与第200题的思路一致，只是dfs返回的时候返回的是当前岛屿的面积。
+
+```python
+class Solution:
+    def maxAreaOfIsland(self, grid: List[List[int]]) -> int:
+        max_area = 0
+        direction = [-1, 0, 1, 0, -1]
+        n = len(grid)
+        m = len(grid[0])
+
+        def dfs_helper(i, j):
+            if grid[i][j] == 0:
+                return 0
+            grid[i][j] = 0
+            count = 1
+            for k in range(4):
+                row = i+direction[k]
+                col = j+direction[k+1]
+                if row >= 0 and row < n and col >= 0 and col < m:
+                    count += dfs_helper(row, col)
+            return count
+        
+        for i in range(n):
+            for j in range(m):
+                if grid[i][j]:
+                    area = dfs_helper(i, j)
+                    max_area = max(area, max_area)
+        
+        return max_area
+            
 ```
 
 ---
