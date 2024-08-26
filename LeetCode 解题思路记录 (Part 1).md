@@ -2222,6 +2222,46 @@ class Solution:
 
 
 
+### 103-二叉树的锯齿形层序遍历
+
+给你二叉树的根节点 `root` ，返回其节点值的 **锯齿形层序遍历** 。（即先从左往右，再从右往左进行下一层遍历，以此类推，层与层之间交替进行）。
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def zigzagLevelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:
+        flag = True
+        ans = []
+        if not root:
+            return ans 
+        queue = [root]
+        while queue:
+            n = len(queue)
+            tmp = []
+            for _ in range(n):
+                node = queue.pop(0)
+                tmp.append(node.val)
+                if node.left:
+                    queue.append(node.left)
+                if node.right:
+                    queue.append(node.right)
+            if not flag:
+                tmp = tmp[::-1]
+            ans.append(tmp)
+            flag = not flag
+        return ans
+            
+```
+
+---
+
+
+
 ### 104-二叉树的最大深度
 
 给定一个二叉树 `root` ，返回其最大深度。
@@ -2561,6 +2601,52 @@ class Solution:
 
 
 
+### 124-二叉树中的最大路径和
+
+二叉树中的 **路径** 被定义为一条节点序列，序列中每对相邻节点之间都存在一条边。同一个节点在一条路径序列中 **至多出现一次** 。该路径 **至少包含一个** 节点，且不一定经过根节点。
+
+**路径和** 是路径中各节点值的总和。
+
+给你一个二叉树的根节点 `root` ，返回其 **最大路径和** 。
+
+**思路**
+
+这道题的思路和543二叉树的直径是一样的，因为最大的路径和不一定会经过根节点，因此我们需要用一个全局变量来记录最大的路径和。注意dfs返回的应该是经过根节点的最长路径和（且以根节点结尾）：如果经过这个根节点的最大路径和大于0，那么可以返回这个值，代表拼接上这个根节点。反之就返回0，代表计算的时候不要带上这个根节点。
+
+更新最长的路径应该是
+
+`max_value = max(max_value, left_value+right_value+node.val)`
+
+代表当前已根节点为中间节点的最大路径和
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def maxPathSum(self, root: Optional[TreeNode]) -> int:
+        max_value = float("-inf")
+
+        def dfs_helper(node):
+            nonlocal max_value
+            if not node:
+                return 0
+            left_value = dfs_helper(node.left)
+            right_value = dfs_helper(node.right)
+            max_value = max(max_value, left_value+right_value+node.val)
+            return max(0, node.val+max(left_value, right_value))
+        dfs_helper(root)
+        return max_value
+
+```
+
+---
+
+
+
 ### 125-验证回文串
 
 如果在将所有大写字符转换为小写字符、并移除所有非字母数字字符之后，短语正着读和反着读都一样。则可以认为该短语是一个 **回文串** 。
@@ -2891,6 +2977,76 @@ class Solution:
             slow = slow.next
         return fast
         
+```
+
+---
+
+
+
+### 143-重排链表
+
+给定一个单链表 `L` 的头节点 `head` ，单链表 `L` 表示为：
+
+```
+L0 → L1 → … → Ln - 1 → Ln
+```
+
+请将其重新排列后变为：
+
+```
+L0 → Ln → L1 → Ln - 1 → L2 → Ln - 2 → …
+```
+
+不能只是单纯的改变节点内部的值，而是需要实际的进行节点交换。
+
+**思路**
+
+首先将链表对半分，然后逆转右边的链表，然后交错拼接两个链表。
+
+注意左边的链表比右边的链表长度要么相等，要么长一个，交错拼接的时候需要条件是`l1 and l2`
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def reorderList(self, head: Optional[ListNode]) -> None:
+        """
+        Do not return anything, modify head in-place instead.
+        """
+        if not head or not head.next:
+            return head
+        slow = fast = head
+        while fast.next and fast.next.next:
+            fast = fast.next.next
+            slow = slow.next
+
+        half = slow.next
+        slow.next = None
+
+        def reverse_link(head):
+            prev = None
+            curr = head
+            while curr:
+                tmp = curr.next
+                curr.next = prev
+                prev = curr
+                curr = tmp
+            return prev
+        
+        half = reverse_link(half)
+
+        l1 = head
+        l2 = half 
+        while l1 and l2:
+            tmp1 = l1.next
+            tmp2 = l2.next
+            l1.next = l2
+            l2.next = tmp1
+            l1 = tmp1
+            l2 = tmp2
 ```
 
 ---
