@@ -667,6 +667,44 @@ class Solution:
 
 
 
+### 41-缺失的第一个正数
+
+给你一个未排序的整数数组 `nums` ，请你找出其中没有出现的最小的正整数。
+
+请你实现时间复杂度为 `O(n)` 并且只使用常数级别额外空间的解决方案。
+
+**思路**
+
+我们将数组中所有小于等于 0 的数修改为 N+1；
+
+我们遍历数组中的每一个数 x，它可能已经被打了标记，因此原本对应的数为 ∣x∣，其中 ∣∣ 为绝对值符号。如果 ∣x∣∈[1,N]，那么我们给数组中的第 ∣x∣−1 个位置的数添加一个负号。注意如果它已经有负号，不需要重复添加；
+
+在遍历完成之后，如果数组中的每一个数都是负数，那么答案是 N+1，否则答案是第一个正数的位置加 1。
+
+```python
+class Solution:
+    def firstMissingPositive(self, nums: List[int]) -> int:
+        n = len(nums)
+        for i in range(n):
+            if nums[i] <= 0:
+                nums[i] = n+1
+        for i in range(n):
+            original_num = abs(nums[i])
+            if original_num <= n:
+                if nums[original_num-1] > 0:
+                    nums[original_num-1] = -nums[original_num-1]
+                    
+        for i in range(n):
+            if nums[i] > 0:
+                return i+1
+        
+        return n+1
+```
+
+---
+
+
+
 ### 42-接雨水
 
 给定 `n` 个非负整数表示每个宽度为 `1` 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。
@@ -1899,6 +1937,47 @@ class Solution:
             heapq.heappush(heap, nums[i])
             heapq.heappop(heap)
         return heap[0]
+```
+
+---
+
+
+
+### 221-最大正方形
+
+在一个由 `'0'` 和 `'1'` 组成的二维矩阵内，找到只包含 `'1'` 的最大正方形，并返回其面积。
+
+**思路**
+
+<img src="https://pic.leetcode-cn.com/8c4bf78cf6396c40291e40c25d34ef56bd524313c2aa863f3a20c1f004f32ab0-image.png" style="zoom: 80%;" />
+
+min(上, 左, 左上) + 1
+
+```python
+class Solution:
+    def maximalSquare(self, matrix: List[List[str]]) -> int:
+        n = len(matrix)
+        m = len(matrix[0])
+
+        dp = [[0]*m for _ in range(n)]
+        max_len = 0
+        for i in range(n):
+            if matrix[i][0] == "1":
+                dp[i][0] = 1
+                max_len = 1
+        
+        for j in range(m):
+            if matrix[0][j] == "1":
+                dp[0][j] = 1
+                max_len = 1
+        
+        for i in range(1,n):
+            for j in range(1,m):
+                if matrix[i][j] == "1":
+                    dp[i][j] = min(dp[i-1][j], dp[i-1][j-1], dp[i][j-1])+1
+                    max_len = max(dp[i][j], max_len)
+
+        return max_len * max_len
 ```
 
 ---
