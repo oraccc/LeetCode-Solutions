@@ -1878,6 +1878,59 @@ class Solution:
 
 
 
+### 76-最小覆盖子串
+
+给你一个字符串 `s` 、一个字符串 `t` 。返回 `s` 中涵盖 `t` 所有字符的最小子串。如果 `s` 中不存在涵盖 `t` 所有字符的子串，则返回空字符串 `""` 。
+
+**思路**
+
+使用双指针，首先遍历一遍t，记录需要标记的char和这些char出现的次数
+
+接着右指针开始依次遍历s，如果当前的char是t中的，那么就将出现次数-1，只要减了之后还是大于等于0的，那么说明现在就是有效的覆盖，若变成负数了那就是多出了了char。当全部的字母覆盖完毕之后，移动左边的指针，使其对应的标记char+1，如果超过了0，说明有没有被覆盖到的情况，接着需要继续移动右指针。
+
+```python
+class Solution:
+    def minWindow(self, s: str, t: str) -> str:
+        n = len(t)
+        unseen_flag = [False]*128
+        unseen_char = [0]*128
+
+        for i in range(n):
+            unseen_flag[ord(t[i])] = True
+            unseen_char[ord(t[i])] += 1
+        
+        left = 0
+        right = 0
+        count = 0
+        min_start = 0
+        min_len = len(s)+1
+
+        while right < len(s):
+            char = s[right]
+            if unseen_flag[ord(char)] == True:
+                unseen_char[ord(char)] -= 1
+                if unseen_char[ord(char)] >= 0:
+                    count += 1
+            while count == n:
+                if right-left+1 < min_len:
+                    min_start = left
+                    min_len = right-left+1
+                if unseen_flag[ord(s[left])]:
+                    unseen_char[ord(s[left])] += 1
+                    if unseen_char[ord(s[left])] > 0:
+                        count -= 1
+                left += 1
+
+            right += 1
+        if min_len > len(s):
+            return ""
+        return s[min_start:min_start+min_len]
+```
+
+---
+
+
+
 ### 78-子集
 
 给你一个整数数组 `nums` ，数组中的元素 **互不相同** 。返回该数组所有可能的
@@ -2746,6 +2799,53 @@ class Solution:
 
                 max_length = max(max_length, num-start+1)
         return max_length
+```
+
+---
+
+
+
+### 129-求根节点到叶节点数字之和
+
+给你一个二叉树的根节点 `root` ，树中每个节点都存放有一个 `0` 到 `9` 之间的数字。
+
+每条从根节点到叶节点的路径都代表一个数字：
+
+- 例如，从根节点到叶节点的路径 `1 -> 2 -> 3` 表示数字 `123` 。
+
+计算从根节点到叶节点生成的 **所有数字之和** 。
+
+**叶节点** 是指没有子节点的节点。
+
+**思路**
+
+dfs递归子节点，如果当前节点没有左子树和右子树了，那就是叶子节点，将当前的curr的值加入答案中。
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def sumNumbers(self, root: Optional[TreeNode]) -> int:
+        ans = 0
+
+        def dfs(curr, node):
+            nonlocal ans 
+            if not node:
+                return
+            curr = curr*10 + node.val
+            if not node.left and not node.right:
+                ans += curr
+                return
+            dfs(curr, node.left)
+            dfs(curr, node.right)
+        
+        dfs(0, root)
+        return ans
+
 ```
 
 ---

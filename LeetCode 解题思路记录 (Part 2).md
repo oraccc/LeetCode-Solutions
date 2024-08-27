@@ -163,6 +163,43 @@ class Solution:
 
 
 
+### 165-比较版本号
+
+给你两个 **版本号字符串** `version1` 和 `version2` ，请你比较它们。版本号由被点 `'.'` 分开的修订号组成。**修订号的值** 是它 **转换为整数** 并忽略前导零。
+
+比较版本号时，请按 **从左到右的顺序** 依次比较它们的修订号。如果其中一个版本字符串的修订号较少，则将缺失的修订号视为 `0`。
+
+返回规则如下：
+
+- 如果 `*version1* < *version2*` 返回 `-1`，
+- 如果 `*version1* > *version2*` 返回 `1`，
+- 除此之外返回 `0`。
+
+**思路**
+
+字符串分割，转int比较
+
+```python
+class Solution:
+    def compareVersion(self, version1: str, version2: str) -> int:
+        l1 = version1.split(".")
+        l2 = version2.split(".")
+
+        for i in range(max(len(l1), len(l2))):
+            num1 = int(l1[i]) if i < len(l1) else 0
+            num2 = int(l2[i]) if i < len(l2) else 0
+            if num1 > num2:
+                return 1
+            elif num1 < num2:
+                return -1
+        
+        return 0
+```
+
+---
+
+
+
 ### 169-多数元素
 
 给定一个大小为 `n` 的数组 `nums` ，返回其中的多数元素。多数元素是指在数组中出现次数 **大于** `⌊ n/2 ⌋` 的元素。你可以假设数组是非空的，并且给定的数组总是存在多数元素。

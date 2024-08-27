@@ -1008,6 +1008,59 @@ class Solution:
 
 
 
+### 76-最小覆盖子串
+
+给你一个字符串 `s` 、一个字符串 `t` 。返回 `s` 中涵盖 `t` 所有字符的最小子串。如果 `s` 中不存在涵盖 `t` 所有字符的子串，则返回空字符串 `""` 。
+
+**思路**
+
+使用双指针，首先遍历一遍t，记录需要标记的char和这些char出现的次数
+
+接着右指针开始依次遍历s，如果当前的char是t中的，那么就将出现次数-1，只要减了之后还是大于等于0的，那么说明现在就是有效的覆盖，若变成负数了那就是多出了了char。当全部的字母覆盖完毕之后，移动左边的指针，使其对应的标记char+1，如果超过了0，说明有没有被覆盖到的情况，接着需要继续移动右指针。
+
+```python
+class Solution:
+    def minWindow(self, s: str, t: str) -> str:
+        n = len(t)
+        unseen_flag = [False]*128
+        unseen_char = [0]*128
+
+        for i in range(n):
+            unseen_flag[ord(t[i])] = True
+            unseen_char[ord(t[i])] += 1
+        
+        left = 0
+        right = 0
+        count = 0
+        min_start = 0
+        min_len = len(s)+1
+
+        while right < len(s):
+            char = s[right]
+            if unseen_flag[ord(char)] == True:
+                unseen_char[ord(char)] -= 1
+                if unseen_char[ord(char)] >= 0:
+                    count += 1
+            while count == n:
+                if right-left+1 < min_len:
+                    min_start = left
+                    min_len = right-left+1
+                if unseen_flag[ord(s[left])]:
+                    unseen_char[ord(s[left])] += 1
+                    if unseen_char[ord(s[left])] > 0:
+                        count -= 1
+                left += 1
+
+            right += 1
+        if min_len > len(s):
+            return ""
+        return s[min_start:min_start+min_len]
+```
+
+---
+
+
+
 ### 88-合并两个有序数组
 
 给你两个按 **非递减顺序** 排列的整数数组 `nums1` 和 `nums2`，另有两个整数 `m` 和 `n` ，分别表示 `nums1` 和 `nums2` 中的元素数目。
@@ -1154,6 +1207,40 @@ class Solution:
 
 
 
+### 101-对称二叉树
+
+给你一个二叉树的根节点 `root` ， 检查它是否轴对称。
+
+**思路**
+
+使用递归，依次检测两个节点（左和右）是不是相同的
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def isSymmetric(self, root: Optional[TreeNode]) -> bool:
+        def helper(left, right):
+            if not left and not right:
+                return True
+            elif not left or not right:
+                return False
+            elif left.val != right.val:
+                return False
+            else:
+                return helper(left.left, right.right) and helper(left.right, right.left)
+        return helper(root.left, root.right)
+        
+```
+
+---
+
+
+
 ### 102-二叉树的层序遍历
 
 给你二叉树的根节点 `root` ，返回其节点值的 **层序遍历** 。 （即逐层地，从左到右访问所有节点）。
@@ -1235,6 +1322,39 @@ class Solution:
 
 
 
+### 105-从前序与中序遍历构造二叉树
+
+给定两个整数数组 `preorder` 和 `inorder` ，其中 `preorder` 是二叉树的**先序遍历**， `inorder` 是同一棵树的**中序遍历**，请构造二叉树并返回其根节点。
+
+**思路**
+
+因为当前先序遍历的第一个数就是根节点，再根据根节点到inorder中去确定左子树的长度，这样便可以依次递归下去了。
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def buildTree(self, preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:
+
+        if not preorder or not inorder:
+            return None
+        val = preorder[0]
+        root = TreeNode(val)
+        in_pos = inorder.index(val)
+        left_len = in_pos
+        root.left = self.buildTree(preorder[1:1+left_len], inorder[0:in_pos])
+        root.right = self.buildTree(preorder[1+left_len:], inorder[in_pos+1:])
+        return root
+```
+
+---
+
+
+
 ### 121-买卖股票的最佳时机
 
 给定一个数组 `prices` ，它的第 `i` 个元素 `prices[i]` 表示一支给定股票第 `i` 天的价格。
@@ -1303,6 +1423,53 @@ class Solution:
             return max(0, node.val+max(left_value, right_value))
         dfs_helper(root)
         return max_value
+
+```
+
+---
+
+
+
+### 129-求根节点到叶节点数字之和
+
+给你一个二叉树的根节点 `root` ，树中每个节点都存放有一个 `0` 到 `9` 之间的数字。
+
+每条从根节点到叶节点的路径都代表一个数字：
+
+- 例如，从根节点到叶节点的路径 `1 -> 2 -> 3` 表示数字 `123` 。
+
+计算从根节点到叶节点生成的 **所有数字之和** 。
+
+**叶节点** 是指没有子节点的节点。
+
+**思路**
+
+dfs递归子节点，如果当前节点没有左子树和右子树了，那就是叶子节点，将当前的curr的值加入答案中。
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def sumNumbers(self, root: Optional[TreeNode]) -> int:
+        ans = 0
+
+        def dfs(curr, node):
+            nonlocal ans 
+            if not node:
+                return
+            curr = curr*10 + node.val
+            if not node.left and not node.right:
+                ans += curr
+                return
+            dfs(curr, node.left)
+            dfs(curr, node.right)
+        
+        dfs(0, root)
+        return ans
 
 ```
 
@@ -1665,6 +1832,43 @@ class Solution:
         
         return l1
 
+```
+
+---
+
+
+
+### 165-比较版本号
+
+给你两个 **版本号字符串** `version1` 和 `version2` ，请你比较它们。版本号由被点 `'.'` 分开的修订号组成。**修订号的值** 是它 **转换为整数** 并忽略前导零。
+
+比较版本号时，请按 **从左到右的顺序** 依次比较它们的修订号。如果其中一个版本字符串的修订号较少，则将缺失的修订号视为 `0`。
+
+返回规则如下：
+
+- 如果 `*version1* < *version2*` 返回 `-1`，
+- 如果 `*version1* > *version2*` 返回 `1`，
+- 除此之外返回 `0`。
+
+**思路**
+
+字符串分割，转int比较
+
+```python
+class Solution:
+    def compareVersion(self, version1: str, version2: str) -> int:
+        l1 = version1.split(".")
+        l2 = version2.split(".")
+
+        for i in range(max(len(l1), len(l2))):
+            num1 = int(l1[i]) if i < len(l1) else 0
+            num2 = int(l2[i]) if i < len(l2) else 0
+            if num1 > num2:
+                return 1
+            elif num1 < num2:
+                return -1
+        
+        return 0
 ```
 
 ---
