@@ -825,6 +825,38 @@ class Solution:
 
 
 
+### 48-旋转图像
+
+给定一个 *n* × *n* 的二维矩阵 `matrix` 表示一个图像。请你将图像顺时针旋转 90 度。
+
+你必须在 原地旋转图像，这意味着你需要直接修改输入的二维矩阵。**请不要** 使用另一个矩阵来旋转图像。
+
+**思路**
+
+先按照正对角线翻折矩阵，接着让矩阵纵向对称翻折
+
+注意这是一个原地的算法，因此如果需要原地交换两个数组，最好的办法就是依次交换两个数组内每一个元素的值
+
+```python
+class Solution:
+    def rotate(self, matrix: List[List[int]]) -> None:
+        """
+        Do not return anything, modify matrix in-place instead.
+        """
+        n = len(matrix)
+        for i in range(n):
+            for j in range(i):
+                matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
+        
+        for j in range(n//2):
+            for i in range(n):
+                matrix[i][j], matrix[i][n-1-j] = matrix[i][n-1-j], matrix[i][j]
+```
+
+---
+
+
+
 ### 53-最大子数组和
 
 给你一个整数数组 `nums` ，请你找出一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。**子数组**是数组中的一个连续部分。
@@ -1850,6 +1882,59 @@ class Solution:
 
 
 
+### 155-最小栈
+
+设计一个支持 `push` ，`pop` ，`top` 操作，并能在常数时间内检索到最小元素的栈。
+
+实现 `MinStack` 类:
+
+- `MinStack()` 初始化堆栈对象。
+- `void push(int val)` 将元素val推入堆栈。
+- `void pop()` 删除堆栈顶部的元素。
+- `int top()` 获取堆栈顶部的元素。
+- `int getMin()` 获取堆栈中的最小元素。
+
+**思路**
+
+设计一个最小的栈，只有当前输入小于等于之前的最小值时，才可以将其append进去，pop的时候也只能将等于目前最小值的数pop出去。
+
+```python
+class MinStack:
+
+    def __init__(self):
+        self.s = []
+        self.min_s = []
+
+    def push(self, val: int) -> None:
+        self.s.append(val)
+        if not self.min_s or self.min_s[-1] >= val:
+            self.min_s.append(val)
+
+    def pop(self) -> None:
+        val = self.s.pop()
+        if self.min_s and self.min_s[-1] == val:
+            self.min_s.pop()
+
+    def top(self) -> int:
+        return self.s[-1]
+
+    def getMin(self) -> int:
+        return self.min_s[-1]
+
+
+
+# Your MinStack object will be instantiated and called as such:
+# obj = MinStack()
+# obj.push(val)
+# obj.pop()
+# param_3 = obj.top()
+# param_4 = obj.getMin()
+```
+
+---
+
+
+
 ### 160-相交链表
 
 给你两个单链表的头节点 `headA` 和 `headB` ，请你找出并返回两个单链表相交的起始节点。如果两个链表不存在相交节点，返回 `null` 。
@@ -1920,6 +2005,34 @@ class Solution:
                 return -1
         
         return 0
+```
+
+---
+
+
+
+### 169-多数元素
+
+给定一个大小为 `n` 的数组 `nums` ，返回其中的多数元素。多数元素是指在数组中出现次数 **大于** `⌊ n/2 ⌋` 的元素。你可以假设数组是非空的，并且给定的数组总是存在多数元素。
+
+**思路**
+
+Boyer-Moore 投票算法，如果我们把众数记为 +1，把其他数记为 −1，将它们全部加起来，显然和大于 `0`，从结果本身我们可以看出众数比其他数多。
+
+```python
+class Solution:
+    def majorityElement(self, nums: List[int]) -> int:
+        ans = nums[0]
+        count = 1
+        for i in range(1, len(nums)):
+            if nums[i] == ans:
+                count += 1
+            else:
+                count -= 1
+                if count == 0:
+                    count = 1
+                    ans = nums[i]
+        return ans
 ```
 
 ---
@@ -2673,6 +2786,66 @@ class Solution:
 
 
 
+### 752-打开转盘锁
+
+你有一个带有四个圆形拨轮的转盘锁。每个拨轮都有10个数字： `'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'` 。每个拨轮可以自由旋转：例如把 `'9'` 变为 `'0'`，`'0'` 变为 `'9'` 。每次旋转都只能旋转一个拨轮的一位数字。
+
+锁的初始数字为 `'0000'` ，一个代表四个拨轮的数字的字符串。
+
+列表 `deadends` 包含了一组死亡数字，一旦拨轮的数字和列表里的任何一个元素相同，这个锁将会被永久锁定，无法再被旋转。
+
+字符串 `target` 代表可以解锁的数字，你需要给出解锁需要的最小旋转次数，如果无论如何不能解锁，返回 `-1` 。
+
+**思路**
+
+使用广度优先搜索queue来找到最短的路径，每个str有8个邻居。同时也需要设立visited的集合，防止重复访问某些位置。注意如果0000就在deadends或者在target中，就可以直接返回结果了。
+
+```python
+class Solution:
+    def openLock(self, deadends: List[str], target: str) -> int:
+
+        if "0000" in deadends:
+            return -1
+        if target == "0000":
+            return 0
+        
+        def change(s):
+            new_s = []
+            for i in range(4):
+                digit = int(s[i])
+                for j in [-1, 1]:
+                    new_d = (digit+j) % 10
+                    new_s.append(s[:i] + str(new_d) + s[i+1:])
+            return new_s
+
+        steps = 0
+        queue = ["0000"]
+        deadends = set(deadends)
+        visited = set()
+        visited.add("0000")
+
+        while queue:
+            steps += 1
+            n = len(queue)
+            for _ in range(n):
+                curr = queue.pop(0)
+                nxt = change(curr)
+                for each in nxt:
+                    if each == target:
+                        return steps
+                    if each in visited or each in deadends:
+                        continue
+                    visited.add(each)
+                    queue.append(each)
+        
+        return -1
+
+```
+
+---
+
+
+
 ### 1143-最长公共子序列
 
 给定两个字符串 `text1` 和 `text2`，返回这两个字符串的最长 **公共子序列** 的长度。如果不存在 **公共子序列** ，返回 `0` 。
@@ -2731,6 +2904,50 @@ def quick_sort(nums, left, right):
     quick_sort(nums, low, left-1)
     quick_sort(nums, left+1, high)
     return nums
+```
+
+---
+
+
+
+### Extra-最大子矩阵
+
+给定一个正整数、负整数和 0 组成的 N × M 矩阵，编写代码找出元素总和最大的子矩阵。
+
+返回一个数组 `[r1, c1, r2, c2]`，其中 `r1`, `c1` 分别代表子矩阵左上角的行号和列号，`r2`, `c2` 分别代表右下角的行号和列号。若有多个满足条件的子矩阵，返回任意一个均可。
+
+**思路**
+
+首先计算出全部的前缀和，方便后续计算
+
+然后固定一个bottom和一个top，从左往右计算当前的矩阵和，如果当前矩阵和小于零，那么就抛弃之前计算的全部结果，直接另起炉灶从下一个位置重新开始计算。
+
+```python
+class Solution:
+    def getMaxMatrix(self, matrix: List[List[int]]) -> List[int]:
+        ans = []
+        n = len(matrix)
+        m = len(matrix[0])
+        pre_sum = [[0]*(m+1) for _ in range(n+1)]
+
+        gloal_max = float("-inf")
+        for i in range(1, n+1):
+            for j in range(1, m+1):
+                pre_sum[i][j] = matrix[i-1][j-1]+pre_sum[i-1][j]+pre_sum[i][j-1]-pre_sum[i-1][j-1]
+
+        for top in range(n):
+            for bottom in range(top,n):
+                local_max = 0
+                left = 0
+                for right in range(m):
+                    local_max = pre_sum[bottom+1][right+1]-pre_sum[bottom+1][left]-pre_sum[top][right+1]+pre_sum[top][left]
+                    if local_max > gloal_max:
+                        gloal_max = local_max
+                        ans = [top, left, bottom, right]
+                    if local_max < 0:
+                        left = right+1
+        return ans
+
 ```
 
 ---

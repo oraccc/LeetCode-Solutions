@@ -1987,6 +1987,66 @@ class Solution:
 
 
 
+### 752-打开转盘锁
+
+你有一个带有四个圆形拨轮的转盘锁。每个拨轮都有10个数字： `'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'` 。每个拨轮可以自由旋转：例如把 `'9'` 变为 `'0'`，`'0'` 变为 `'9'` 。每次旋转都只能旋转一个拨轮的一位数字。
+
+锁的初始数字为 `'0000'` ，一个代表四个拨轮的数字的字符串。
+
+列表 `deadends` 包含了一组死亡数字，一旦拨轮的数字和列表里的任何一个元素相同，这个锁将会被永久锁定，无法再被旋转。
+
+字符串 `target` 代表可以解锁的数字，你需要给出解锁需要的最小旋转次数，如果无论如何不能解锁，返回 `-1` 。
+
+**思路**
+
+使用广度优先搜索queue来找到最短的路径，每个str有8个邻居。同时也需要设立visited的集合，防止重复访问某些位置。注意如果0000就在deadends或者在target中，就可以直接返回结果了。
+
+```python
+class Solution:
+    def openLock(self, deadends: List[str], target: str) -> int:
+
+        if "0000" in deadends:
+            return -1
+        if target == "0000":
+            return 0
+        
+        def change(s):
+            new_s = []
+            for i in range(4):
+                digit = int(s[i])
+                for j in [-1, 1]:
+                    new_d = (digit+j) % 10
+                    new_s.append(s[:i] + str(new_d) + s[i+1:])
+            return new_s
+
+        steps = 0
+        queue = ["0000"]
+        deadends = set(deadends)
+        visited = set()
+        visited.add("0000")
+
+        while queue:
+            steps += 1
+            n = len(queue)
+            for _ in range(n):
+                curr = queue.pop(0)
+                nxt = change(curr)
+                for each in nxt:
+                    if each == target:
+                        return steps
+                    if each in visited or each in deadends:
+                        continue
+                    visited.add(each)
+                    queue.append(each)
+        
+        return -1
+
+```
+
+---
+
+
+
 ### 763-划分字母区间
 
 给你一个字符串 `s` 。我们要把这个字符串划分为尽可能多的片段，同一字母最多出现在一个片段中。
@@ -2182,4 +2242,48 @@ def quick_sort(nums, left, right):
     quick_sort(nums, left+1, high)
     return nums
 ```
+
+
+
+### Extra-最大子矩阵
+
+给定一个正整数、负整数和 0 组成的 N × M 矩阵，编写代码找出元素总和最大的子矩阵。
+
+返回一个数组 `[r1, c1, r2, c2]`，其中 `r1`, `c1` 分别代表子矩阵左上角的行号和列号，`r2`, `c2` 分别代表右下角的行号和列号。若有多个满足条件的子矩阵，返回任意一个均可。
+
+**思路**
+
+首先计算出全部的前缀和，方便后续计算
+
+然后固定一个bottom和一个top，从左往右计算当前的矩阵和，如果当前矩阵和小于零，那么就抛弃之前计算的全部结果，直接另起炉灶从下一个位置重新开始计算。
+
+```python
+class Solution:
+    def getMaxMatrix(self, matrix: List[List[int]]) -> List[int]:
+        ans = []
+        n = len(matrix)
+        m = len(matrix[0])
+        pre_sum = [[0]*(m+1) for _ in range(n+1)]
+
+        gloal_max = float("-inf")
+        for i in range(1, n+1):
+            for j in range(1, m+1):
+                pre_sum[i][j] = matrix[i-1][j-1]+pre_sum[i-1][j]+pre_sum[i][j-1]-pre_sum[i-1][j-1]
+
+        for top in range(n):
+            for bottom in range(top,n):
+                local_max = 0
+                left = 0
+                for right in range(m):
+                    local_max = pre_sum[bottom+1][right+1]-pre_sum[bottom+1][left]-pre_sum[top][right+1]+pre_sum[top][left]
+                    if local_max > gloal_max:
+                        gloal_max = local_max
+                        ans = [top, left, bottom, right]
+                    if local_max < 0:
+                        left = right+1
+        return ans
+
+```
+
+---
 
