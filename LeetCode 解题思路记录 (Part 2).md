@@ -1759,6 +1759,35 @@ class Solution:
 
 
 
+### 628-三个数的最大乘积
+
+给你一个整型数组 `nums` ，在数组中找出由三个数组成的最大乘积，并输出这个乘积。
+
+**思路**
+
+首先将数组排序。
+
+如果数组中全是非负数，则排序后最大的三个数相乘即为最大乘积；如果全是非正数，则最大的三个数相乘同样也为最大乘积。
+
+如果数组中有正数有负数，则最大乘积既可能是三个最大正数的乘积，也可能是两个最小负数（即绝对值最大）与最大正数的乘积。
+
+```python
+class Solution:
+    def maximumProduct(self, nums: List[int]) -> int:
+        nums.sort()
+        if nums[0] >= 0:
+            return nums[-1]*nums[-2]*nums[-3]
+        elif nums[-1] <= 0:
+            return nums[-1]*nums[-2]*nums[-3]
+        else:
+            max_value = max(nums[-1]*nums[-2]*nums[-3], nums[0]*nums[1]*nums[-1])
+            return max_value
+```
+
+---
+
+
+
 ### 647-回文子串
 
 给你一个字符串 `s` ，请你统计并返回这个字符串中 **回文子串** 的数目。

@@ -1061,6 +1061,57 @@ class Solution:
 
 
 
+### 82-删除排序链表中的重复元素II
+
+给定一个已排序的链表的头 `head` ， *删除原始链表中所有重复数字的节点，只留下不同的数字* 。返回 *已排序的链表* 。
+
+**思路**
+
+本题的难点在于如何删除连续的重复的元素，比如1233445要删去3和4，我们可以设立一个flag来作为标志，代表目前遇到了重复的数字，当当前的节点与下一个节点的值一样的时候，将flag设置为True。若不一样，则需要检查flag的值，如果是True说明需要跳过一系列的元素，反之则不需要。注意跳过元素之后不要急着把prev也往前移一位，因为很有可能是连续的重复数字。
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def deleteDuplicates(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        if not head or not head.next:
+            return head
+        dummy_head = ListNode(-1)
+        dummy_head.next = head
+        prev = dummy_head
+        curr = head
+        flag = False
+
+        while curr:
+            if not curr.next:
+                if not flag:
+                    prev.next = curr
+                    curr = curr.next
+                else:
+                    prev.next = None
+                    curr = curr.next
+            else:
+                if curr.val == curr.next.val:
+                    curr = curr.next
+                    flag = True
+                else:
+                    if not flag:
+                        prev = curr
+                        curr = curr.next
+                    else:
+                        prev.next = curr.next
+                        curr = curr.next 
+                    flag = False
+        return dummy_head.next
+```
+
+---
+
+
+
 ### 88-合并两个有序数组
 
 给你两个按 **非递减顺序** 排列的整数数组 `nums1` 和 `nums2`，另有两个整数 `m` 和 `n` ，分别表示 `nums1` 和 `nums2` 中的元素数目。
@@ -2453,6 +2504,35 @@ class Solution:
         
         helper(root)
         return diameter
+```
+
+---
+
+
+
+### 628-三个数的最大乘积
+
+给你一个整型数组 `nums` ，在数组中找出由三个数组成的最大乘积，并输出这个乘积。
+
+**思路**
+
+首先将数组排序。
+
+如果数组中全是非负数，则排序后最大的三个数相乘即为最大乘积；如果全是非正数，则最大的三个数相乘同样也为最大乘积。
+
+如果数组中有正数有负数，则最大乘积既可能是三个最大正数的乘积，也可能是两个最小负数（即绝对值最大）与最大正数的乘积。
+
+```python
+class Solution:
+    def maximumProduct(self, nums: List[int]) -> int:
+        nums.sort()
+        if nums[0] >= 0:
+            return nums[-1]*nums[-2]*nums[-3]
+        elif nums[-1] <= 0:
+            return nums[-1]*nums[-2]*nums[-3]
+        else:
+            max_value = max(nums[-1]*nums[-2]*nums[-3], nums[0]*nums[1]*nums[-1])
+            return max_value
 ```
 
 ---
