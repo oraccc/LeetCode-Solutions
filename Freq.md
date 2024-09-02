@@ -2642,6 +2642,56 @@ class Solution:
 
 
 
+### 394-字符串解码
+
+给定一个经过编码的字符串，返回它解码后的字符串。
+
+编码规则为: `k[encoded_string]`，表示其中方括号内部的 `encoded_string` 正好重复 `k` 次。注意 `k` 保证为正整数。
+
+你可以认为输入字符串总是有效的；输入字符串中没有额外的空格，且输入的方括号总是符合格式要求的。
+
+此外，你可以认为原始数据不包含数字，所有的数字只表示重复的次数 `k` ，例如不会出现像 `3a` 或 `2[4]` 的输入。
+
+**思路**
+
+因为编码后的字符串有可能存在嵌套的情况，这个先入后出的情况就需要考虑栈。
+
+依次遍历这个字符串，如果是数字，则把之后的数组全部找出来，作为乘数入栈，如果是字符或者是左括号，那么也直接入栈。当检查到是右括号的时候，将在左括号之后的字符全部取出，并乘以times，计算结果再次入栈。
+
+遍历结束之后，栈里面只有全部的字符串了，将其拼接即可得到答案。
+
+```python
+class Solution:
+    def decodeString(self, s: str) -> str:
+        stack = []
+        i = 0
+        ans = ""
+        while i < len(s):
+            if s[i] >= "0" and s[i] <= "9":
+                times = 0
+                while s[i] >= "0" and s[i] <= "9":
+                    times = times*10 + int(s[i])
+                    i += 1
+                stack.append(times)
+            elif s[i] != "]":
+                stack.append(s[i])
+                i += 1
+            else:
+                curr = ""
+                while stack[-1] != "[":
+                    curr = stack.pop() + curr
+                stack.pop()
+                times = stack.pop()
+                stack.append(curr*times)
+                i += 1
+        ans = "".join(stack)
+        return ans
+```
+
+---
+
+
+
 ### 415-字符串相加
 
 给定两个字符串形式的非负整数 `num1` 和`num2` ，计算它们的和并同样以字符串形式返回。

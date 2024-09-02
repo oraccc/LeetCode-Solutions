@@ -1476,8 +1476,6 @@ class Solution:
                 i += 1
         ans = "".join(stack)
         return ans
-
-
 ```
 
 ---
