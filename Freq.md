@@ -1093,6 +1093,38 @@ class Solution:
 
 
 
+### 78-子集
+
+给你一个整数数组 `nums` ，数组中的元素 **互不相同** 。返回该数组所有可能的
+
+子集（幂集）。
+
+解集 **不能** 包含重复的子集。你可以按 **任意顺序** 返回解集。
+
+**思路**
+
+我们需要用回溯法来解决这一类问题。首先考虑因为回答中不能有重复的元素，因此我们需要用下标来限制取数的范围，backtracking(i)则代表目前从i这个下标开始取数。每次取数的时候都需要将当前的结果放进答案中。而下一个数的取值范围就从当前取值位的下一位开始，能保证不重复。
+
+```python
+class Solution:
+    def subsets(self, nums: List[int]) -> List[List[int]]:
+        n = len(nums)
+        ans = []
+        curr = []
+        def backtracking(i):
+            ans.append(curr[:])
+            for j in range(i, n):
+                curr.append(nums[j])
+                backtracking(j+1)
+                curr.pop()
+        backtracking(0)
+        return ans
+```
+
+---
+
+
+
 ### 82-删除排序链表中的重复元素II
 
 给定一个已排序的链表的头 `head` ， *删除原始链表中所有重复数字的节点，只留下不同的数字* 。返回 *已排序的链表* 。
@@ -1432,6 +1464,42 @@ class Solution:
         root.left = self.buildTree(preorder[1:1+left_len], inorder[0:in_pos])
         root.right = self.buildTree(preorder[1+left_len:], inorder[in_pos+1:])
         return root
+```
+
+---
+
+
+
+### 112-路径总和
+
+给你二叉树的根节点 `root` 和一个表示目标和的整数 `targetSum` 。判断该树中是否存在 **根节点到叶子节点** 的路径，这条路径上所有节点值相加等于目标和 `targetSum` 。如果存在，返回 `true` ；否则，返回 `false` 。
+
+**叶子节点** 是指没有子节点的节点。
+
+**思路**
+
+如果当前节点是叶子节点，并且减去当前值之后，curr为0，那么说明找到了这样的一条路径，返回True即可，否则是False。但如果不是叶子节点，那么需要进一步递归了。
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool:
+        if not root:
+            return False
+
+        curr = targetSum - root.val
+        if not root.left and not root.right:
+            if curr == 0:
+                return True 
+            else:
+                return False
+        else:
+            return self.hasPathSum(root.left, curr) or self.hasPathSum(root.right, curr)
 ```
 
 ---
@@ -1974,6 +2042,38 @@ class Solution:
 
 
 
+### 162-寻找峰值
+
+峰值元素是指其值严格大于左右相邻值的元素。
+
+给你一个整数数组 `nums`，找到峰值元素并返回其索引。数组可能包含多个峰值，在这种情况下，返回 **任何一个峰值** 所在位置即可。
+
+你可以假设 `nums[-1] = nums[n] = -∞` 。
+
+你必须实现时间复杂度为 `O(log n)` 的算法来解决此问题。
+
+**思路**
+
+考虑到时间限制，因此一定是用二分法。我们只需要让区间往高的地方走就可以了，这样一定可以达到一个峰值。
+
+```python
+class Solution:
+    def findPeakElement(self, nums: List[int]) -> int:
+        left = 0
+        right = len(nums)-1
+        while left < right:
+            mid = (left+right)//2
+            if nums[mid] < nums[mid+1]:
+                left = mid+1
+            else:
+                right = mid
+        return left
+```
+
+---
+
+
+
 ### 165-比较版本号
 
 给你两个 **版本号字符串** `version1` 和 `version2` ，请你比较它们。版本号由被点 `'.'` 分开的修订号组成。**修订号的值** 是它 **转换为整数** 并忽略前导零。
@@ -2346,6 +2446,64 @@ class Solution:
                     max_len = max(dp[i][j], max_len)
 
         return max_len * max_len
+```
+
+---
+
+
+
+### 232-用栈实现队列
+
+请你仅使用两个栈实现先入先出队列。队列应当支持一般队列支持的所有操作（`push`、`pop`、`peek`、`empty`）：
+
+实现 `MyQueue` 类：
+
+- `void push(int x)` 将元素 x 推到队列的末尾
+- `int pop()` 从队列的开头移除并返回元素
+- `int peek()` 返回队列开头的元素
+- `boolean empty()` 如果队列为空，返回 `true` ；否则，返回 `false`
+
+**思路**
+
+设置两个栈，一个用于入，另一个用于出，当需要pop的之后，如果出的栈没有元素，就将入的栈中的元素全部放到出的栈中。
+
+```python
+class MyQueue:
+
+    def __init__(self):
+        self.in_stack = []
+        self.out_stack = []
+
+
+    def push(self, x: int) -> None:
+        self.in_stack.append(x)
+
+
+    def pop(self) -> int:
+        if not self.out_stack:
+            while self.in_stack:
+                self.out_stack.append(self.in_stack.pop())
+        res = self.out_stack.pop()
+        return res
+
+    def peek(self) -> int:
+        if not self.out_stack:
+            while self.in_stack:
+                self.out_stack.append(self.in_stack.pop())
+
+        return self.out_stack[-1]
+
+    def empty(self) -> bool:
+        return not self.in_stack and not self.out_stack
+
+
+
+# Your MyQueue object will be instantiated and called as such:
+# obj = MyQueue()
+# obj.push(x)
+# param_2 = obj.pop()
+# param_3 = obj.peek()
+# param_4 = obj.empty()
 ```
 
 ---

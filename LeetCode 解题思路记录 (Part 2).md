@@ -163,6 +163,38 @@ class Solution:
 
 
 
+### 162-寻找峰值
+
+峰值元素是指其值严格大于左右相邻值的元素。
+
+给你一个整数数组 `nums`，找到峰值元素并返回其索引。数组可能包含多个峰值，在这种情况下，返回 **任何一个峰值** 所在位置即可。
+
+你可以假设 `nums[-1] = nums[n] = -∞` 。
+
+你必须实现时间复杂度为 `O(log n)` 的算法来解决此问题。
+
+**思路**
+
+考虑到时间限制，因此一定是用二分法。我们只需要让区间往高的地方走就可以了，这样一定可以达到一个峰值。
+
+```python
+class Solution:
+    def findPeakElement(self, nums: List[int]) -> int:
+        left = 0
+        right = len(nums)-1
+        while left < right:
+            mid = (left+right)//2
+            if nums[mid] < nums[mid+1]:
+                left = mid+1
+            else:
+                right = mid
+        return left
+```
+
+---
+
+
+
 ### 165-比较版本号
 
 给你两个 **版本号字符串** `version1` 和 `version2` ，请你比较它们。版本号由被点 `'.'` 分开的修订号组成。**修订号的值** 是它 **转换为整数** 并忽略前导零。
@@ -772,6 +804,64 @@ class Solution:
 
 
 
+### 225-用队列实现栈
+
+请你仅使用两个队列实现一个后入先出（LIFO）的栈，并支持普通栈的全部四种操作（`push`、`top`、`pop` 和 `empty`）。
+
+实现 `MyStack` 类：
+
+- `void push(int x)` 将元素 x 压入栈顶。
+- `int pop()` 移除并返回栈顶元素。
+- `int top()` 返回栈顶元素。
+- `boolean empty()` 如果栈是空的，返回 `true` ；否则，返回 `false` 。
+
+**思路**
+
+设置两个队列，当需要pop的之后，将一个队列清空到只剩下一个为止，最后的那个元素便是需要pop的。为了方便处理，我们让其中一个始终是空的，剩下一个始终是有元素的。
+
+```python
+class MyStack:
+
+    def __init__(self):
+        self.q1 = []
+        self.q2 = []
+
+    def push(self, x: int) -> None:
+        self.q1.append(x)
+
+
+    def pop(self) -> int:
+        while len(self.q1) > 1:
+            self.q2.append(self.q1.pop(0))
+        tmp = self.q1.pop(0)
+        self.q1, self.q2 = self.q2, self.q1
+        return tmp
+
+    def top(self) -> int:
+        while len(self.q1) > 1:
+            self.q2.append(self.q1.pop(0))
+        tmp = self.q1.pop(0)
+        self.q2.append(tmp)
+        self.q1, self.q2 = self.q2, self.q1
+        return tmp
+
+    def empty(self) -> bool:
+        return not self.q1 and not self.q2
+
+
+
+# Your MyStack object will be instantiated and called as such:
+# obj = MyStack()
+# obj.push(x)
+# param_2 = obj.pop()
+# param_3 = obj.top()
+# param_4 = obj.empty()
+```
+
+---
+
+
+
 ### 226-翻转二叉树
 
 给你一棵二叉树的根节点 `root` ，翻转这棵二叉树，并返回其根节点。
@@ -833,6 +923,64 @@ class Solution:
             return self.kthSmallest(root.left, k)
         else:
             return self.kthSmallest(root.right, k-(left_count+1))
+```
+
+---
+
+
+
+### 232-用栈实现队列
+
+请你仅使用两个栈实现先入先出队列。队列应当支持一般队列支持的所有操作（`push`、`pop`、`peek`、`empty`）：
+
+实现 `MyQueue` 类：
+
+- `void push(int x)` 将元素 x 推到队列的末尾
+- `int pop()` 从队列的开头移除并返回元素
+- `int peek()` 返回队列开头的元素
+- `boolean empty()` 如果队列为空，返回 `true` ；否则，返回 `false`
+
+**思路**
+
+设置两个栈，一个用于入，另一个用于出，当需要pop的之后，如果出的栈没有元素，就将入的栈中的元素全部放到出的栈中。
+
+```python
+class MyQueue:
+
+    def __init__(self):
+        self.in_stack = []
+        self.out_stack = []
+
+
+    def push(self, x: int) -> None:
+        self.in_stack.append(x)
+
+
+    def pop(self) -> int:
+        if not self.out_stack:
+            while self.in_stack:
+                self.out_stack.append(self.in_stack.pop())
+        res = self.out_stack.pop()
+        return res
+
+    def peek(self) -> int:
+        if not self.out_stack:
+            while self.in_stack:
+                self.out_stack.append(self.in_stack.pop())
+
+        return self.out_stack[-1]
+
+    def empty(self) -> bool:
+        return not self.in_stack and not self.out_stack
+
+
+
+# Your MyQueue object will be instantiated and called as such:
+# obj = MyQueue()
+# obj.push(x)
+# param_2 = obj.pop()
+# param_3 = obj.peek()
+# param_4 = obj.empty()
 ```
 
 ---
