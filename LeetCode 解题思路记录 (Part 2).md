@@ -2105,6 +2105,34 @@ class Solution:
 
 
 
+### 718-最长重复子数组
+
+给两个整数数组 `nums1` 和 `nums2` ，返回 *两个数组中 **公共的** 、长度最长的子数组的长度* 。
+
+**思路**
+
+使用dp解决，整体的转移方程是`dp[i][j] = dp[i-1][j-1]+1`当第i位置和第j位置相同的时候。注意这道题和1143题的区别。这里的`dp[i][j]`代表的是在这个位置结尾的字符串的最长子数组，不一定是整体的最大值。
+
+```python
+class Solution:
+    def findLength(self, nums1: List[int], nums2: List[int]) -> int:
+        n = len(nums1)
+        m = len(nums2)
+        max_length = 0
+        dp = [[0 for _ in range(m+1)] for _ in range(n+1)]
+        for i in range(1, n+1):
+            for j in range(1, m+1):
+                if nums1[i-1] == nums2[j-1]:
+                    dp[i][j] = dp[i-1][j-1]+1
+                    max_length = max(max_length, dp[i][j])
+        
+        return max_length
+```
+
+---
+
+
+
 ### 739-每日温度
 
 给定一个整数数组 `temperatures` ，表示每天的温度，返回一个数组 `answer` ，其中 `answer[i]` 是指对于第 `i` 天，下一个更高温度出现在几天后。如果气温在这之后都不会升高，请在该位置用 `0` 来代替。
@@ -2388,6 +2416,48 @@ def quick_sort(nums, left, right):
     quick_sort(nums, left+1, high)
     return nums
 ```
+
+---
+
+
+
+### Extra-归并排序
+
+```python
+class Solution:
+    def sortArray(self, nums: List[int]) -> List[int]:
+        if len(nums) == 1:
+            return nums
+        mid = len(nums)//2
+        left_half = nums[:mid]
+        right_half = nums[mid:]
+
+        i = j = k = 0
+        left_half = self.sortArray(left_half)
+        right_half = self.sortArray(right_half)
+
+        while i < len(left_half) and j < len(right_half):
+            if left_half[i] < right_half[j]:
+                nums[k] = left_half[i]
+                i += 1
+            else:
+                nums[k] = right_half[j]
+                j += 1
+            k += 1
+        while i < len(left_half):
+            nums[k] = left_half[i]
+            i += 1
+            k += 1
+
+        while j < len(right_half):
+            nums[k] = right_half[j]
+            j += 1
+            k += 1
+        
+        return nums
+```
+
+---
 
 
 

@@ -2994,6 +2994,34 @@ class Solution:
 
 
 
+### 718-最长重复子数组
+
+给两个整数数组 `nums1` 和 `nums2` ，返回 *两个数组中 **公共的** 、长度最长的子数组的长度* 。
+
+**思路**
+
+使用dp解决，整体的转移方程是`dp[i][j] = dp[i-1][j-1]+1`当第i位置和第j位置相同的时候。注意这道题和1143题的区别。这里的`dp[i][j]`代表的是在这个位置结尾的字符串的最长子数组，不一定是整体的最大值。
+
+```python
+class Solution:
+    def findLength(self, nums1: List[int], nums2: List[int]) -> int:
+        n = len(nums1)
+        m = len(nums2)
+        max_length = 0
+        dp = [[0 for _ in range(m+1)] for _ in range(n+1)]
+        for i in range(1, n+1):
+            for j in range(1, m+1):
+                if nums1[i-1] == nums2[j-1]:
+                    dp[i][j] = dp[i-1][j-1]+1
+                    max_length = max(max_length, dp[i][j])
+        
+        return max_length
+```
+
+---
+
+
+
 ### 752-打开转盘锁
 
 你有一个带有四个圆形拨轮的转盘锁。每个拨轮都有10个数字： `'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'` 。每个拨轮可以自由旋转：例如把 `'9'` 变为 `'0'`，`'0'` 变为 `'9'` 。每次旋转都只能旋转一个拨轮的一位数字。
@@ -3090,73 +3118,4 @@ class Solution:
 
 ---
 
-
-
-### Extra-快速排序
-
-```python
-def quick_sort(nums, left, right):
-    if left >= right: return nums
-    pivot = nums[left]
-    low = left
-    high = right
-    while left < right:
-        while left < right and nums[right] >= pivot:
-            right -= 1
-        nums[left] = nums[right]
-        while left < right and nums[left] <= pivot:
-            left += 1
-        nums[right] = nums[left]
-
-    nums[right] = pivot
-    quick_sort(nums, low, left-1)
-    quick_sort(nums, left+1, high)
-    return nums
-```
-
----
-
-
-
-### Extra-最大子矩阵
-
-给定一个正整数、负整数和 0 组成的 N × M 矩阵，编写代码找出元素总和最大的子矩阵。
-
-返回一个数组 `[r1, c1, r2, c2]`，其中 `r1`, `c1` 分别代表子矩阵左上角的行号和列号，`r2`, `c2` 分别代表右下角的行号和列号。若有多个满足条件的子矩阵，返回任意一个均可。
-
-**思路**
-
-首先计算出全部的前缀和，方便后续计算
-
-然后固定一个bottom和一个top，从左往右计算当前的矩阵和，如果当前矩阵和小于零，那么就抛弃之前计算的全部结果，直接另起炉灶从下一个位置重新开始计算。
-
-```python
-class Solution:
-    def getMaxMatrix(self, matrix: List[List[int]]) -> List[int]:
-        ans = []
-        n = len(matrix)
-        m = len(matrix[0])
-        pre_sum = [[0]*(m+1) for _ in range(n+1)]
-
-        gloal_max = float("-inf")
-        for i in range(1, n+1):
-            for j in range(1, m+1):
-                pre_sum[i][j] = matrix[i-1][j-1]+pre_sum[i-1][j]+pre_sum[i][j-1]-pre_sum[i-1][j-1]
-
-        for top in range(n):
-            for bottom in range(top,n):
-                local_max = 0
-                left = 0
-                for right in range(m):
-                    local_max = pre_sum[bottom+1][right+1]-pre_sum[bottom+1][left]-pre_sum[top][right+1]+pre_sum[top][left]
-                    if local_max > gloal_max:
-                        gloal_max = local_max
-                        ans = [top, left, bottom, right]
-                    if local_max < 0:
-                        left = right+1
-        return ans
-
-```
-
----
 

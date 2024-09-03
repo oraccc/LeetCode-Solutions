@@ -251,6 +251,35 @@ class Solution:
 
 
 
+### 14-最长公共前缀
+
+编写一个函数来查找字符串数组中的最长公共前缀。
+
+如果不存在公共前缀，返回空字符串 `""`。
+
+```python
+class Solution:
+    def longestCommonPrefix(self, strs: List[str]) -> str:
+        ans = ""
+        min_len = min(len(s) for s in strs)
+        idx = 0
+        while idx < min_len:
+            char = ""
+            for i in range(len(strs)):
+                if not char:
+                    char = strs[i][idx]
+                elif strs[i][idx] != char:
+                    return ans
+            idx += 1
+            ans += char
+        
+        return ans
+```
+
+---
+
+
+
 ### 15-三数之和
 
 给你一个整数数组 `nums` ，判断是否存在三元组 `[nums[i], nums[j], nums[k]]` 满足 `i != j`、`i != k` 且 `j != k` ，同时还满足 `nums[i] + nums[j] + nums[k] == 0` 。请你返回所有和为 `0` 且不重复的三元组。
@@ -2234,6 +2263,63 @@ class Solution:
         
         helper(root)
         return ans
+```
+
+---
+
+
+
+### 97-交错字符串
+
+给定三个字符串 `s1`、`s2`、`s3`，请你帮忙验证 `s3` 是否是由 `s1` 和 `s2` **交错** 组成的。
+
+两个字符串 `s` 和 `t` **交错** 的定义与过程如下，其中每个字符串都会被分割成若干 **非空** 
+
+子字符串：
+
+- `s = s1 + s2 + ... + sn`
+- `t = t1 + t2 + ... + tm`
+- `|n - m| <= 1`
+- **交错** 是 `s1 + t1 + s2 + t2 + s3 + t3 + ...` 或者 `t1 + s1 + t2 + s2 + t3 + s3 + ...`
+
+**注意：**`a + b` 意味着字符串 `a` 和 `b` 连接。
+
+**思路**
+
+使用`dp*i][j] `表示 *s*1 的前 *i* 个字符和 *s*2 的前 *j* 个字符是否能构成 *s*3 的前 *i*+*j* 个字符。
+`dp[i][j]=(dp[i][j−1] and s2[j−1]==s3[i+j−1]) or (dp[i−1][j] and s1[i−1]==s3[i+j−1])` 。
+
+解释：s1 前i 位和 s2 的前 j 位能否组成 s3 的前 i+j 位取决于两种情况：
+
+* s1 的前 i−1 个字符和 s2 的前 j 个字符能否构成 s3 的前 i+j−1 位，且 s1 的第 i 位（s1[i−1]）是否等于 s3 的第 i+j 位（s3[i+j−1]）。
+* s1 的前 i 个字符和 s2 的前 j−1 个字符能否构成 s3 的前 i+j−1 位，且 s2 的第 j 位（s2[j−1]）是否等于 s3 的第 i+j 位（s3[i+j−1]）。
+
+```python
+class Solution:
+    def isInterleave(self, s1: str, s2: str, s3: str) -> bool:
+        n = len(s1)
+        m = len(s2)
+        l = len(s3)
+        if n+m != l:
+            return False
+        
+        dp = [[False]*(m+1) for _ in range(n+1)]
+        dp[0][0] = True
+
+        for i in range(1, n+1):
+            if dp[i-1][0] and s1[i-1] == s3[i-1]:
+                dp[i][0] = True
+        
+        for j in range(1, m+1):
+            if dp[0][j-1] and s2[j-1] == s3[j-1]:
+                dp[0][j] = True
+        
+        for i in range(1, n+1):
+            for j in range(1, m+1):
+                if (dp[i][j-1] and s2[j-1] == s3[i+j-1]) or (dp[i-1][j] and s1[i-1] == s3[i+j-1]):
+                    dp[i][j] = True
+        
+        return dp[n][m]
 ```
 
 ---
