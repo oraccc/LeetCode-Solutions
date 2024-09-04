@@ -804,6 +804,67 @@ class Solution:
 
 
 
+### 224-基本计算器
+
+给你一个字符串表达式 `s` ，请你实现一个基本计算器来计算并返回它的值。
+
+注意:不允许使用任何将字符串作为数学表达式计算的内置函数，比如 `eval()` 。
+
+- `1 <= s.length <= 3 * 105`
+- `s` 由数字、`'+'`、`'-'`、`'('`、`')'`、和 `' '` 组成
+- `s` 表示一个有效的表达式
+- '+' 不能用作一元运算(例如， "+1" 和 `"+(2 + 3)"` 无效)
+- '-' 可以用作一元运算(即 "-1" 和 `"-(2 + 3)"` 是有效的)
+- 输入中不存在两个连续的操作符
+- 每个数字和运行的计算将适合于一个有符号的 32位 整数
+
+**思路**
+
+因为有括号的存在，因此会需要使用栈进行操作
+
+对于连续的数字，将其保存到curr中，对于加号或者减号，先将其之前的数字处理了，然后curr置零之后再记录当前的符号。
+
+对于左括号，意味着我需要将之前的ans先暂时存起来，因为接下来要有限计算括号里面的内容了，同时与ans存起来的还有计算符号，因此当遇到右括号的时候要连续pop两次。
+
+```python
+class Solution:
+    def calculate(self, s: str) -> int:
+        stack = []
+        answer = 0
+        sign = 1
+        curr = 0
+
+        for c in s:
+            if c.isnumeric():
+                curr = curr*10+int(c)
+            elif c == "+":
+                answer += curr*sign
+                curr = 0
+                sign = 1
+            elif c == "-":
+                answer += curr*sign
+                curr = 0
+                sign = -1
+            elif c == "(":
+                stack.append(answer)
+                stack.append(sign)
+                answer = 0
+                sign = 1
+            elif c == ")":
+                answer += curr*sign
+                curr = 0
+                
+                answer *= stack.pop()
+                answer += stack.pop()
+        
+        answer += curr*sign
+        return answer
+```
+
+---
+
+
+
 ### 225-用队列实现栈
 
 请你仅使用两个队列实现一个后入先出（LIFO）的栈，并支持普通栈的全部四种操作（`push`、`top`、`pop` 和 `empty`）。
@@ -1287,6 +1348,79 @@ class Solution:
                 left = mid+1
         return left
 
+```
+
+---
+
+
+
+### 297-二叉树的序列化与反序列化
+
+序列化是将一个数据结构或者对象转换为连续的比特位的操作，进而可以将转换后的数据存储在一个文件或者内存中，同时也可以通过网络传输到另一个计算机环境，采取相反方式重构得到原数据。
+
+请设计一个算法来实现二叉树的序列化与反序列化。这里不限定你的序列 / 反序列化算法执行逻辑，你只需要保证一个二叉树可以被序列化为一个字符串并且将这个字符串反序列化为原始的树结构。
+
+```python
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Codec:
+
+    def serialize(self, root):
+        """Encodes a tree to a single string.
+        
+        :type root: TreeNode
+        :rtype: str
+        """
+        if not root:
+            return "[]"
+        queue = [root]
+        ans = []
+        while queue:
+            node = queue.pop(0)
+            if node:
+                ans.append(str(node.val))
+                queue.append(node.left)
+                queue.append(node.right)
+            else:
+                ans.append("null")
+        
+        return "[" + ",".join(ans) + "]"
+        
+
+    def deserialize(self, data):
+        """Decodes your encoded data to tree.
+        
+        :type data: str
+        :rtype: TreeNode
+        """
+        if data == "[]":
+            return None
+        vals = data[1:-1].split(",")
+        root = TreeNode(int(vals[0]))
+        queue = [root]
+        i = 1
+
+        while queue:
+            node = queue.pop(0)
+            if vals[i] != "null":
+                node.left = TreeNode(int(vals[i]))
+                queue.append(node.left)
+            i += 1
+            if vals[i] != "null":
+                node.right = TreeNode(int(vals[i]))
+                queue.append(node.right)
+            i += 1
+        return root
+
+# Your Codec object will be instantiated and called as such:
+# ser = Codec()
+# deser = Codec()
+# ans = deser.deserialize(ser.serialize(root))
 ```
 
 ---

@@ -2692,39 +2692,35 @@ class Solution:
 
 
 
-### 415-字符串相加
+### 416-分割等和子集
 
-给定两个字符串形式的非负整数 `num1` 和`num2` ，计算它们的和并同样以字符串形式返回。
-
-你不能使用任何內建的用于处理大整数的库（比如 `BigInteger`）， 也不能直接将输入的字符串转换为整数形式。
+给你一个 **只包含正整数** 的 **非空** 数组 `nums` 。请你判断是否可以将这个数组分割成两个子集，使得两个子集的元素和相等。
 
 **思路**
 
-把字符串倒过来处理
+使用动态规划来解决这个问题，我们使用二维dp，其中`dp[i][j]`代表到下标为i的这个数位置，能不能组合成j这个目标数组，是一个0-1的背包问题，对于每一个数，我们可以选择放入或者不放入，如果放入，那么就是`dp[i-1][j-nums[i]]`，如果不放入，那么就是`dp[i][j-1]`。注意有些数可能太大了，所以不一定能放。最后只需要看二维数组的最后一个值就可以了。
 
 ```python
 class Solution:
-    def addStrings(self, num1: str, num2: str) -> str:
-        num1 = num1[::-1]
-        num2 = num2[::-1]
+    def canPartition(self, nums: List[int]) -> bool:
+        n = len(nums)
+        if sum(nums) % 2 == 1:
+            return False
+        target = sum(nums) // 2
 
-        n = len(num1)
-        m = len(num2)
-
-        carry = 0
-        result = ""
-        i = 0
-        while i < max(n, m) or carry:
-            digit1 = int(num1[i]) if i < n else 0
-            digit2 = int(num2[i]) if i < m else 0
-            curr_sum = (digit1+digit2+carry) % 10
-            carry = (digit1+digit2+carry) // 10
-            result += str(curr_sum)
-            i += 1
+        dp = [[False]*(target+1) for _ in range(n)]
+        dp[0][0] = True
+        if nums[0] <= target:
+            dp[0][nums[0]] = True
         
-        return result[::-1]
+        for i in range(1, n):
+            for j in range(target+1):
+                if nums[i] <= j:
+                    dp[i][j] = dp[i-1][j-nums[i]] or dp[i-1][j]
+                else:
+                    dp[i][j] = dp[i-1][j]
         
-        
+        return dp[n-1][target]
 ```
 
 ---
@@ -3117,5 +3113,4 @@ class Solution:
 ```
 
 ---
-
 
