@@ -2829,6 +2829,36 @@ class Solution:
 
 
 
+### 122-买卖股票的最佳时机-II
+
+给你一个整数数组 `prices` ，其中 `prices[i]` 表示某支股票第 `i` 天的价格。
+
+在每一天，你可以决定是否购买和/或出售股票。你在任何时候 **最多** 只能持有 **一股** 股票。你也可以先购买，然后在 **同一天** 出售。
+
+返回 *你能获得的 **最大** 利润* 。
+
+**思路**
+
+因为不限制购买，反正知道股票涨势了 只要明天比今天贵 我就今天买明天卖
+
+```python
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        ans = 0
+        prev = prices[0]
+        for i in range(1, len(prices)):
+            if prices[i] > prev:
+                ans += prices[i] - prev
+                prev = prices[i]
+            else:
+                prev = prices[i]
+        return ans
+```
+
+---
+
+
+
 ### 124-二叉树中的最大路径和
 
 二叉树中的 **路径** 被定义为一条节点序列，序列中每对相邻节点之间都存在一条边。同一个节点在一条路径序列中 **至多出现一次** 。该路径 **至少包含一个** 节点，且不一定经过根节点。

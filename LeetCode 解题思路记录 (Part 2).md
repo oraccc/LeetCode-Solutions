@@ -1204,6 +1204,8 @@ class Solution:
 
 ### 240-搜索二维矩阵II
 
+> 类似题目 74-搜索二维矩阵
+
 编写一个高效的算法来搜索 `*m* x *n*` 矩阵 `matrix` 中的一个目标值 `target` 。该矩阵具有以下特性：
 
 - 每行的元素从左到右升序排列。
@@ -1829,6 +1831,54 @@ class Solution:
                 right += 1
         return ans
 
+
+
+```
+
+---
+
+
+
+### 440-字典序的第k小数字
+
+给定整数 `n` 和 `k`，返回 `[1, n]` 中字典序第 `k` 小的数字。
+
+**思路**
+
+设与 `n_i`右侧相邻的兄弟节点为 `n_{i+1}`，按照先序遍历的顺序，先访问 n_i 构造的子树，再访问 n_i+1，此时满足 n_i <n_i+1
+
+设以 n_i为根节点构成的子树的节点数目为 step(n_i)，则此时有以下两种可能：
+
+* 如果满足 step(n_i )≤k−i，则此时可以肯定第 k 小的节点一定不在 n_i为根的子树中，存在于 n_i的兄弟节点构成的子树中，则此时可以跳过 step(n_i) 个节点，从兄弟节点开始往后查找 k−i−step(n_i) 个节点。
+
+* 如果满足 step(n_i)>k−i，则此时可以肯定第 k 小的节点一定在 n_i构成的子树中，则此时需要在 n_i的孩子节点中依次进行查找。此时跳过子树中最小的根节点 n_i，从左侧第一个孩子开始往后查找 k−i−1 个节点，此时左侧第一个孩子的值为 10×n_i。
+
+* 依次重复上述操作直到找到 k 小的节点即可。
+
+
+
+```python
+class Solution:
+    def getSteps(self, cur: int, n: int) -> int:
+        steps, first, last = 0, cur, cur
+        while first <= n:
+            steps += min(last, n) - first + 1
+            first *= 10
+            last = last * 10 + 9
+        return steps
+
+    def findKthNumber(self, n: int, k: int) -> int:
+        cur = 1
+        k -= 1
+        while k:
+            steps = self.getSteps(cur, n)
+            if steps <= k:
+                k -= steps
+                cur += 1
+            else:
+                cur *= 10
+                k -= 1
+        return cur
 
 
 ```

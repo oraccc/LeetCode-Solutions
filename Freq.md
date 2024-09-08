@@ -297,7 +297,7 @@ class Solution:
 
  **思路**
 
-注意循环条件是l1 and l2
+注意循环条件是 `l1 and l2`
 
 由于题目要求是拼接原来的链表，因此最好不要创建新的节点，直接对原来的链表做操作即可
 
@@ -1506,6 +1506,49 @@ class Solution:
 
 
 
+### 113-路径总和II
+
+给你二叉树的根节点 `root` 和一个整数目标和 `targetSum` ，找出所有 **从根节点到叶子节点** 路径总和等于给定目标和的路径。
+
+**叶子节点** 是指没有子节点的节点。
+
+**思路**
+
+使用回溯法的时候需要注意，在进入回溯和离开回溯的时候，应该要保证前后状态是一样的，不然的话会出错，尤其是到了最后要结束的部分更要小心。可以模拟最后一步的状态来判断会不会出错。
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def pathSum(self, root: Optional[TreeNode], targetSum: int) -> List[List[int]]:
+        ans = []
+        curr = []
+
+        def dfs_helper(root, target):
+            if not root:
+                return
+            curr.append(root.val)
+            target -= root.val
+            if not root.left and not root.right:
+                if target == 0:
+                    ans.append(curr[:])
+            dfs_helper(root.left, target)
+            dfs_helper(root.right, target)
+            curr.pop()
+        
+        dfs_helper(root, targetSum)
+        return ans
+
+```
+
+---
+
+
+
 ### 121-买卖股票的最佳时机
 
 给定一个数组 `prices` ，它的第 `i` 个元素 `prices[i]` 表示一支给定股票第 `i` 天的价格。
@@ -2579,6 +2622,43 @@ class Solution:
                 deque.append(nums[i])
                 ans.append(deque[0])
         return ans
+```
+
+---
+
+
+
+### 240-搜索二维矩阵II
+
+> 类似题目 74-搜索二维矩阵
+
+编写一个高效的算法来搜索 `*m* x *n*` 矩阵 `matrix` 中的一个目标值 `target` 。该矩阵具有以下特性：
+
+- 每行的元素从左到右升序排列。
+- 每列的元素从上到下升序排列。
+
+<img src="https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/11/25/searchgrid2.jpg" style="zoom:67%;" />
+
+**思路**
+
+从右上角往左下方看，就可以发现是一个类似于二叉搜索树的结构，对于每一个元素，比它大的元素在它的下面，比它小的元素在它的左边。因此起点是右上方，一旦搜索过程中出界了，就说明没有找到。
+
+```python
+class Solution:
+    def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:
+        n = len(matrix)
+        m = len(matrix[0])
+        curr_i = 0
+        curr_j = m-1
+        while curr_i >= 0 and curr_i < n and curr_j >= 0 and curr_j < m:
+            if matrix[curr_i][curr_j] == target:
+                return True
+            elif matrix[curr_i][curr_j] > target:
+                curr_j -= 1
+            else:
+                curr_i += 1
+        return False
+        
 ```
 
 ---
