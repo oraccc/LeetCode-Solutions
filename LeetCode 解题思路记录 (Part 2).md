@@ -1887,6 +1887,34 @@ class Solution:
 
 
 
+### 442-数据中重复的数据
+
+给你一个长度为 `n` 的整数数组 `nums` ，其中 `nums` 的所有整数都在范围 `[1, n]` 内，且每个整数出现 **一次** 或 **两次** 。请你找出所有出现 **两次** 的整数，并以数组形式返回。
+
+你必须设计并实现一个时间复杂度为 `O(n)` 且仅使用常量额外空间（不包括存储输出所需的空间）的算法解决此问题。
+
+**思路**
+
+因为所有的数字都会在1到n之间，因此可以用取相反数来标记这个数字之前有没有出现过，如果当前这个i位置的数已经是负数了，那么i一定已经被访问过了。
+
+```python
+class Solution:
+    def findDuplicates(self, nums: List[int]) -> List[int]:
+        ans = []
+        for i in range(len(nums)):
+            num = abs(nums[i])
+            if nums[num-1] < 0:
+                ans.append(num)
+            else:
+                nums[num-1] = -nums[num-1]
+
+        return ans
+```
+
+---
+
+
+
 ### 470-用Rand7()实现Rand10()
 
 给定方法 `rand7` 可生成 `[1,7]` 范围内的均匀随机整数，试写一个方法 `rand10` 生成 `[1,10]` 范围内的均匀随机整数。
