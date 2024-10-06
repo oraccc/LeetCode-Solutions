@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeetCode Notes</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- 引入 marked.js 用于解析 Markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- 引入 highlight.js -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/languages/python.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- 导航栏 -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>导航栏</h2>
+                <button id="load-file-btn">加载题目</button>
+            </div>
+            <!-- 滚动的题目列表 -->
+            <div class="sidebar-content">
+                <ul id="index">
+                    <!-- 动态加载题目索引 -->
+                </ul>
+            </div>
+        </div>
+        
+        <!-- 题解显示区域 -->
+        <div class="content">
+            <h2>题解</h2>
+            <div id="note-content">
+                <!-- 题解内容会动态加载到这里 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入 JavaScript 文件 -->
+    <script src="script.js"></script>
+</body>
+</html>
