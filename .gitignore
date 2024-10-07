@@ -1,1 +1,2 @@
 *.exe
+web_archive/node_modules/*
