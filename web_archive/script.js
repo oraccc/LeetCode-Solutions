@@ -93,6 +93,7 @@ function updateDatabase(problems) {
     .then(response => response.json())
     .then(data => {
         console.log(data.message);
+        showNotification('题目已更新'); // 成功后显示弹窗
         loadFromDatabase(); // 重新加载数据库中的内容
     })
     .catch(error => {
@@ -101,6 +102,21 @@ function updateDatabase(problems) {
 }
 
 
+// 显示弹窗的方法
+function showNotification(message) {
+    const notification = document.getElementById('notification');
+    notification.textContent = message; // 设置弹窗内容
+    notification.classList.remove('hidden'); // 移除隐藏样式
+    notification.classList.add('show'); // 添加显示样式
+
+    // 设置2秒后自动淡出
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            notification.classList.add('hidden');
+        }, 500); // 等待淡出动画结束后再隐藏
+    }, 2000);
+}
 
 // // 加载并解析 Markdown 文件，提取题目标题和内容
 // function loadMdFile(filePath) {
