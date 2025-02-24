@@ -1,12 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const path = require('path');
+// const path = require('path');
 const db = require('./db');
 const app = express();
 
 app.use(bodyParser.json({ limit: '10mb' }));
 // 托管静态文件 (HTML, CSS, JS 等)
-app.use(express.static(path.join(__dirname)));
+// app.use(express.static(path.join(__dirname)));
+app.use(express.static("public"));
 
 // API 路径：插入或覆盖题目
 app.post('/api/update-problems', (req, res) => {
