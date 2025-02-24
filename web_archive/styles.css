@@ -72,7 +72,7 @@ button:hover {
     background-color: #B8860B;
 }
 
-/* 题解显示区域样式 */
+/* 题解部分 */
 .content {
     flex-grow: 1;
     background-color: #fff;
@@ -86,7 +86,15 @@ button:hover {
     scrollbar-gutter: stable;  /* 保持滚动条区域稳定 */
 }
 
-/* 题解显示区域中的内容 */
+/* 题解部分的标题栏（可能包含更多功能按钮） */
+#title-bar {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;  /* 内容区域也可以有圆角 */
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);  /* 添加轻微阴影 */
+}
+
+/* 题解部分中的内容（不含标题） */
 #note-content {
     margin-top: 20px;
     background-color: #fff;
